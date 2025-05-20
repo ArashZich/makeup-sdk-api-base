@@ -1,10 +1,6 @@
 // src/core/modules/api-handler.js
 
 import { getUserIP } from "../../utils/getUserIP";
-import {
-  getProductAndTokenInfo,
-  mapProductInfoToSDKFormat,
-} from "../../utils/api/product-service";
 
 /**
  * کلاس مدیریت ارتباط با API
@@ -26,86 +22,105 @@ export class ApiHandler {
 
   /**
    * بارگذاری اطلاعات محصول و توکن از API
-   * @param {string} productUid - شناسه محصول
+   * @param {string} productUid - شناسه محصول (اختیاری)
    * @returns {Promise<Object>} نتیجه اعتبارسنجی و اطلاعات محصول
    */
-  async loadProductAndTokenInfo(productUid) {
+  async loadProductAndTokenInfo(productUid = null) {
     try {
-      // فراخوانی API یکپارچه
-      const result = await getProductAndTokenInfo(this.token, productUid);
+      // دریافت IP کاربر
+      const userIP = await getUserIP().catch(() => "unknown");
 
-      // تبدیل ساختار productInfo به فرمت سازگار با SDK
-      const mappedProductInfo = result.productInfo
-        ? mapProductInfoToSDKFormat(result.productInfo)
-        : null;
+      // آدرس API از متغیرهای محیطی
+      const apiUrl =
+        process.env.PRODUCT_INFO_URL ||
+        "http://localhost:4000/api/v1/sdk/product-info";
 
-      return {
-        isValid: result.tokenInfo.isValid,
-        isPremium: result.tokenInfo.isPremium,
-        projectType: result.tokenInfo.projectType,
-        tokenInfo: result.tokenInfo,
-        productInfo: mappedProductInfo,
-        mediaFeatures: result.tokenInfo.mediaFeatures,
-      };
-    } catch (error) {
-      console.error("خطا در بارگذاری اطلاعات محصول:", error);
-      throw error;
-    }
-  }
+      // ساخت بدنه درخواست
+      const requestBody = productUid ? { productUid } : {};
 
-  /**
-   * اعتبارسنجی توکن SDK
-   * @returns {Promise<Object>} نتیجه اعتبارسنجی
-   */
-  async validateToken() {
-    try {
-      const userIP = await getUserIP();
-      const response = await fetch(process.env.VALIDATE_TOKEN_URL, {
+      // ارسال درخواست به سرور
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-Real-User-IP": userIP,
+          "x-sdk-token": this.token,
+          "x-real-user-ip": userIP,
         },
-        body: JSON.stringify({ token: this.token }),
+        body: JSON.stringify(requestBody),
       });
 
+      // بررسی پاسخ
       const data = await response.json();
 
-      if (!data.isValid) {
+      // بررسی وضعیت پاسخ
+      if (!response.ok) {
         return {
           isValid: false,
-          message: "توکن نامعتبر یا منقضی شده است.",
+          message: data.message || "خطا در دریافت اطلاعات محصول و توکن",
         };
       }
 
-      if (data.projectType !== "makeup") {
-        return {
-          isValid: true,
-          isPremium: data.isPremium,
-          projectType: data.projectType,
-          message: "این توکن برای پروژه آرایش مجازی معتبر نیست.",
-        };
+      // تبدیل اطلاعات productInfo به فرمت مناسب SDK
+      if (data.productInfo) {
+        data.productInfo = this._mapProductInfoToSDKFormat(data.productInfo);
       }
 
       return {
-        isValid: true,
-        isPremium: data.isPremium,
-        projectType: data.projectType,
-        tokenInfo: data.features || {},
-        mediaFeatures: data.mediaFeatures || {
+        isValid: data.tokenInfo?.isValid || false,
+        isPremium: data.tokenInfo?.isPremium || false,
+        projectType: data.tokenInfo?.projectType || null,
+        tokenInfo: data.tokenInfo || {},
+        productInfo: data.productInfo || null,
+        mediaFeatures: data.tokenInfo?.mediaFeatures || {
           allowedSources: [],
           allowedViews: [],
           comparisonModes: [],
         },
+        message: data.message || null,
       };
     } catch (error) {
-      console.error("خطا در اعتبارسنجی توکن:", error);
+      console.error("خطا در ارتباط با API:", error);
       return {
         isValid: false,
         message:
-          "خطا در ارتباط با سرور، لطفاً اتصال اینترنت خود را بررسی کنید.",
+          "خطا در ارتباط با سرور. لطفاً اتصال اینترنت خود را بررسی کنید.",
       };
     }
+  }
+
+  /**
+   * تبدیل ساختار productInfo به ساختار سازگار با SDK
+   * @param {Object} productInfo - اطلاعات محصول دریافتی از سرور
+   * @returns {Object} اطلاعات محصول با ساختار سازگار با SDK
+   * @private
+   */
+  _mapProductInfoToSDKFormat(productInfo) {
+    // تبدیل رنگ‌های محصول به فرمت مورد نیاز SDK
+    const colors = productInfo.colors.map((color) => ({
+      code: color.name,
+      color: color.hexCode,
+      url: color.imageUrl,
+      feature: productInfo.type, // نوع محصول به عنوان ویژگی
+    }));
+
+    // تبدیل پترن‌های محصول به فرمت مورد نیاز SDK
+    const patterns = productInfo.patterns.map((pattern) => ({
+      name: pattern.name,
+      code: pattern.code,
+      imageUrl: pattern.imageUrl,
+    }));
+
+    return {
+      id: productInfo.id,
+      uid: productInfo.uid,
+      name: productInfo.name,
+      description: productInfo.description,
+      type: productInfo.type,
+      code: productInfo.code,
+      thumbnail: productInfo.thumbnail,
+      colors,
+      patterns,
+    };
   }
 
   /**
@@ -113,19 +128,16 @@ export class ApiHandler {
    * @param {string} makeupType - نوع آرایش
    * @param {string} color - رنگ
    * @param {string} colorCode - کد رنگ
+   * @returns {Promise<void>}
    */
   async sendAnalytics(makeupType, color, colorCode) {
     try {
-      // check token
-      if (!this.token) {
-        console.warn("No token found for analytics");
+      // بررسی اعتبار پارامترها
+      if (!this.token || !makeupType || !color) {
         return;
       }
 
-      // چک کردن اعتبار پارامترها
-      if (!makeupType || !color) return;
-
-      // جلوگیری از ارسال درخواست‌های تکراری در بازه زمانی کوتاه (مثلاً 2 ثانیه)
+      // جلوگیری از ارسال درخواست‌های تکراری در بازه زمانی کوتاه
       const now = Date.now();
       if (
         this._lastAnalyticsCall.makeupType === makeupType &&
@@ -136,8 +148,13 @@ export class ApiHandler {
         return;
       }
 
-      // ارسال درخواست
-      const response = await fetch(process.env.ANALYTICS_MAKEUP_URL, {
+      // آدرس API از متغیرهای محیطی
+      const apiUrl =
+        process.env.ANALYTICS_MAKEUP_URL ||
+        "https://api.example.com/api/v1/sdk/analytics";
+
+      // ارسال درخواست به سرور
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -158,7 +175,7 @@ export class ApiHandler {
         timestamp: now,
       };
     } catch (error) {
-      console.warn("Error sending analytics:", error);
+      console.warn("خطا در ارسال داده‌های تحلیلی:", error);
     }
   }
 }
