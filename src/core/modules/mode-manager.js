@@ -1,0 +1,287 @@
+// src/core/modules/mode-manager.js
+
+import { setupFaceMesh, cleanup } from "../methods/faceMesh";
+import { ImageManager } from "../methods/imageManager";
+import { initImageUpload } from "../../ui";
+
+/**
+ * کلاس مدیریت حالت‌های SDK
+ */
+export class ModeManager {
+  /**
+   * سازنده کلاس ModeManager
+   * @param {Object} options - تنظیمات
+   * @param {Object} elements - المنت‌های HTML
+   * @param {Object} managers - مدیرهای مختلف
+   */
+  constructor(options, elements, managers) {
+    this.options = options;
+    this.videoElement = elements.videoElement;
+    this.canvasElement = elements.canvasElement;
+
+    this.featureManager = managers.featureManager;
+    this.uiManager = managers.uiManager;
+
+    this.cameraStream = null;
+    this.faceMeshInstance = null;
+    this.imageManager = null;
+    this.onResultsCallback = null;
+  }
+
+  /**
+   * تنظیم تابع فراخوانی شونده برای نتایج تشخیص چهره
+   * @param {Function} callback - تابع فراخوانی شونده
+   */
+  setOnResultsCallback(callback) {
+    this.onResultsCallback = callback;
+  }
+
+  /**
+   * تغییر حالت SDK (دوربین/تصویر)
+   * @param {string} newMode - حالت جدید
+   * @returns {Promise<void>}
+   */
+  async switchMode(newMode) {
+    if (newMode === this.options.mode) return;
+
+    // cleanup حالت قبلی
+    if (this.options.mode === "camera") {
+      // در حالت تصویر، دوربین را کاملاً متوقف نمی‌کنیم بلکه فقط مخفی می‌کنیم
+      if (newMode === "image") {
+        this._hideCamera();
+      } else {
+        // اگر به حالت دیگری غیر از image می‌رویم، عملیات cleanup کامل را انجام می‌دهیم
+        this._cleanupCamera();
+      }
+    } else if (this.options.mode === "image") {
+      if (this.imageManager) {
+        this.imageManager.destroy();
+      }
+
+      // اگر در حالت image بودیم و مدال بسته شد، به حالت دوربین برگردیم
+      if (newMode === "camera") {
+        this.options.mode = newMode;
+        await this.initCamera();
+        return; // بعد از فراخوانی initCamera نیازی به اجرای کد بعدی نیست
+      }
+    }
+
+    this.options.mode = newMode;
+
+    // راه‌اندازی حالت جدید
+    if (newMode === "image") {
+      await this.initImageMode();
+    }
+  }
+
+  /**
+   * مخفی کردن دوربین بدون توقف کامل
+   * @private
+   */
+  _hideCamera() {
+    if (this.videoElement) {
+      this.videoElement.style.display = "none";
+      this.videoElement.style.visibility = "hidden";
+    }
+
+    if (this.canvasElement) {
+      // پاک کردن canvas برای نمایش صفحه سیاه
+      const ctx = this.canvasElement.getContext("2d");
+      ctx.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+    }
+  }
+
+  /**
+   * پاکسازی کامل دوربین
+   * @private
+   */
+  _cleanupCamera() {
+    if (this.faceMeshInstance) {
+      this.faceMeshInstance = null;
+      cleanup();
+    }
+
+    if (this.cameraStream) {
+      this.cameraStream.getTracks().forEach((track) => {
+        track.stop();
+      });
+      this.cameraStream = null;
+    }
+
+    if (this.videoElement) {
+      this.videoElement.srcObject = null;
+    }
+  }
+
+  /**
+   * راه‌اندازی حالت دوربین
+   * @returns {Promise<void>}
+   */
+  async initCamera() {
+    try {
+      // نمایش المنت ویدیو
+      if (this.videoElement) {
+        this.videoElement.style = ""; // پاک کردن همه استایل‌ها
+        this.videoElement.style.transform = "scaleX(-1)"; // فقط حفظ mirror
+        this.videoElement.style.display = "block";
+      }
+
+      // تنظیم مجدد استایل‌های canvas
+      if (this.canvasElement) {
+        this.canvasElement.style = ""; // پاک کردن همه استایل‌ها
+        this.canvasElement.style.transform = "scaleX(-1)"; // فقط حفظ mirror
+        this.canvasElement.style.display = "block";
+      }
+
+      // راه‌اندازی ویدیو و face mesh
+      await this._setupVideo();
+
+      const faceMeshResult = await setupFaceMesh(
+        this.videoElement,
+        this.canvasElement,
+        this.onResultsCallback || (() => {})
+      );
+
+      this.faceMeshInstance = faceMeshResult.faceMesh;
+      this.cameraStream = faceMeshResult.stream;
+
+      return true;
+    } catch (error) {
+      console.error("Error initializing camera:", error);
+      this.uiManager.showErrorMessage(
+        "خطا",
+        "مشکلی در راه‌اندازی دوربین رخ داد"
+      );
+      return false;
+    }
+  }
+
+  /**
+   * راه‌اندازی حالت تصویر
+   * @returns {Promise<void>}
+   */
+  async initImageMode() {
+    try {
+      const container = document.querySelector(".armo-sdk-container");
+
+      // مخفی کردن کامل ویدیو
+      if (this.videoElement) {
+        this.videoElement.style.display = "none";
+        this.videoElement.style.visibility = "hidden";
+      }
+
+      // تنظیم canvas برای نمایش سیاه
+      if (this.canvasElement) {
+        this.canvasElement.style.display = "block";
+        this.canvasElement.style.visibility = "visible";
+        this.canvasElement.style.position = "absolute";
+        this.canvasElement.style.top = "0";
+        this.canvasElement.style.left = "0";
+        this.canvasElement.style.width = "100%";
+        this.canvasElement.style.height = "100%";
+
+        // پر کردن canvas با رنگ سیاه
+        const ctx = this.canvasElement.getContext("2d");
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+      }
+
+      // ایجاد یا بازیابی imageManager
+      if (!this.imageManager) {
+        this.imageManager = new ImageManager(
+          this.canvasElement,
+          this.featureManager
+        );
+      }
+
+      // نمایش رابط کاربری آپلود
+      const uploadManager = initImageUpload(container, async (imageData) => {
+        this.uiManager.showLoading();
+
+        try {
+          const success = await this.imageManager.loadImage(imageData);
+
+          if (success) {
+            // در صورت موفقیت، اعمال تنظیمات فعلی آرایش روی عکس
+            if (this.options.currentMakeupType) {
+              this.imageManager.updateMakeup(
+                this.options.currentMakeupType,
+                this.options.currentColor,
+                this.options.currentPattern,
+                this.options.transparency
+              );
+            }
+          } else {
+            this.uiManager.showErrorMessage(
+              "خطا",
+              "چهره‌ای در تصویر تشخیص داده نشد"
+            );
+          }
+        } catch (error) {
+          this.uiManager.showErrorMessage(
+            "خطا",
+            "مشکلی در پردازش تصویر رخ داد"
+          );
+        } finally {
+          this.uiManager.hideLoading();
+        }
+      });
+
+      // اضافه کردن callback برای زمانی که کاربر مدال را می‌بندد
+      uploadManager.show(() => {
+        // برگرداندن به حالت دوربین
+        this.switchMode("camera");
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Error initializing image mode:", error);
+      this.uiManager.showErrorMessage(
+        "خطا",
+        "مشکلی در راه‌اندازی حالت تصویر رخ داد"
+      );
+      return false;
+    }
+  }
+
+  /**
+   * راه‌اندازی ویدیو
+   * @private
+   */
+  async _setupVideo() {
+    try {
+      if (this.videoElement) {
+        this.videoElement.setAttribute("playsinline", "");
+        this.videoElement.setAttribute("autoplay", "");
+        this.videoElement.muted = true;
+      }
+    } catch (error) {
+      console.error("Error setting up video:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * پاکسازی منابع
+   */
+  cleanup() {
+    this._cleanupCamera();
+
+    if (this.imageManager) {
+      this.imageManager.destroy();
+      this.imageManager = null;
+    }
+  }
+
+  /**
+   * دریافت حالت فعلی
+   * @returns {string} حالت فعلی
+   */
+  getCurrentMode() {
+    return this.options.mode;
+  }
+}
+
+export default ModeManager;

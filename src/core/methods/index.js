@@ -6,3 +6,4 @@ export { default as FeatureManager } from "./featureManager";
 export * from "./featureManager";
 export * from "./renderManager";
 export * from "./imageManager";
+export * from "./productManager";
