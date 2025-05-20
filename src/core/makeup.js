@@ -1,9 +1,9 @@
-// src/core/makeup.js
+// Updated version of src/core/makeup.js
 
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
-// ماژول‌های اصلی از methods
+// Core methods
 import {
   cleanup,
   createDOMElements,
@@ -13,21 +13,21 @@ import {
   ProductManager,
 } from "./methods";
 
-// ماژول‌های جدید از modules
+// Updated module imports
 import { ApiHandler } from "./modules/api-handler";
 import { LightDetector } from "./modules/light-detector";
 import { UiManager } from "./modules/ui-manager";
 import { ModeManager } from "./modules/mode-manager";
 import { ProductLoader } from "./modules/product-loader";
 
-// رابط کاربری
+// UI components
 import { initColorPicker, initCameraControls } from "../ui";
 
-// استایل‌ها
+// Styles
 import "../ui/styles/index.css";
 
 /**
- * کلاس اصلی Makeup برای مدیریت SDK آرایش مجازی
+ * Main Makeup class for virtual makeup SDK
  */
 class Makeup {
   static version = "v2";
@@ -42,14 +42,14 @@ class Makeup {
   };
 
   /**
-   * سازنده کلاس Makeup
-   * @param {Object} options - گزینه‌های پیکربندی
+   * Constructor for Makeup class
+   * @param {Object} options - Configuration options
    */
   constructor(options) {
-    // قبل از شروع، cleanup را فراخوانی می‌کنیم
+    // Run cleanup before starting
     cleanup();
 
-    // تنظیمات اولیه
+    // Initial settings
     this.options = {
       showColorPicker: true,
       colors: [],
@@ -63,67 +63,69 @@ class Makeup {
       ...options,
     };
 
-    // وضعیت اولیه
+    // Initial state
     this.status = Makeup.STATUS.INITIALIZING;
     this.currentMakeupType = null;
 
-    // بررسی توکن
+    // Check token
     if (!window.Makeup.token) {
       console.error(
-        "توکن باید قبل از استفاده از کلاس Makeup به صورت جهانی تنظیم شود."
+        "Token must be set globally before using the Makeup class."
       );
-      throw new Error("توکن تنظیم نشده است.");
+      throw new Error("Token is not set.");
     }
 
     this.token = window.Makeup.token;
 
-    // شروع راه‌اندازی
+    // Start initialization
     this._initialize();
   }
 
   /**
-   * راه‌اندازی SDK
+   * Initialize the SDK
    * @private
    */
   async _initialize() {
     try {
-      // ایجاد المنت‌های DOM
+      // Create DOM elements
       const elements = createDOMElements(this.options, false);
       this.videoElement = elements.videoElement;
       this.canvasElement = elements.canvasElement;
       this.loadingElement = elements.loadingElement;
 
-      // نمایش حالت بارگذاری
+      // Show loading state
       this.status = Makeup.STATUS.LOADING;
 
-      // ایجاد مدیرهای مختلف
+      // Create managers
       this.uiManager = new UiManager({ loadingElement: this.loadingElement });
       this.uiManager.showLoading();
 
       this.apiHandler = new ApiHandler(this.token);
 
-      // دریافت اطلاعات توکن و محصول
+      // Get token and product info
       let validationResult;
 
       if (this.options.productUid) {
+        // Use the updated method structure for product info
         validationResult = await this.apiHandler.loadProductAndTokenInfo(
           this.options.productUid
         );
       } else {
+        // Use the validateToken method
         validationResult = await this.apiHandler.validateToken();
       }
 
-      // بررسی نتیجه اعتبارسنجی
+      // Check validation result
       if (!validationResult.isValid) {
-        throw new Error(validationResult.message || "توکن نامعتبر است.");
+        throw new Error(validationResult.message || "Invalid token.");
       }
 
-      // ذخیره اطلاعات مهم
+      // Store important info
       this.isPremium = validationResult.isPremium;
       this.tokenInfo = validationResult.tokenInfo;
       this.mediaFeatures = validationResult.mediaFeatures;
 
-      // ایجاد مدیرها
+      // Create managers with the validated data
       this.featureManager = new FeatureManager(validationResult.tokenInfo);
       this.productManager = new ProductManager(validationResult.productInfo);
 
@@ -162,32 +164,32 @@ class Makeup {
         uiManager: this.uiManager,
       });
 
-      // تنظیم نوع آرایش فعلی
+      // Set current makeup type
       this._setupMakeupType(validationResult.productInfo);
 
-      // تنظیم callback برای faceMesh
+      // Set callback for faceMesh
       this.modeManager.setOnResultsCallback(this._onResults.bind(this));
 
-      // راه‌اندازی رابط کاربری
+      // Initialize UI
       this._initializeUI();
 
-      // راه‌اندازی حالت مناسب
+      // Initialize appropriate mode
       await this._initializeMode();
 
-      // تنظیم وضعیت نهایی
+      // Set final state
       this.status = Makeup.STATUS.READY;
       this.uiManager.hideLoading();
 
-      // فراخوانی callback
+      // Call callback
       if (typeof this.options.onReady === "function") {
         this.options.onReady();
       }
     } catch (error) {
       this.status = Makeup.STATUS.ERROR;
-      console.error(`خطا در راه‌اندازی: ${error.message}`);
+      console.error(`Initialization error: ${error.message}`);
 
       if (this.uiManager) {
-        this.uiManager.showErrorMessage("خطا در راه‌اندازی", error.message);
+        this.uiManager.showErrorMessage("Initialization Error", error.message);
       }
 
       if (typeof this.options.onError === "function") {
@@ -197,32 +199,32 @@ class Makeup {
   }
 
   /**
-   * تنظیم نوع آرایش
-   * @param {Object} productInfo - اطلاعات محصول
+   * Set makeup type
+   * @param {Object} productInfo - Product information
    * @private
    */
   _setupMakeupType(productInfo) {
     if (productInfo) {
-      // تنظیم نوع آرایش بر اساس نوع محصول
+      // Set makeup type based on product type
       this.currentMakeupType = this.productManager.getProductType();
     } else if (this.options.face) {
-      // تنظیم نوع آرایش از گزینه‌ها
+      // Set makeup type from options
       if (this.featureManager.isFeatureEnabled(this.options.face)) {
         this.currentMakeupType = this.options.face;
       } else {
-        // استفاده از اولین نوع مجاز
+        // Use first allowed type
         const enabledFeatures = this.featureManager.getEnabledFeatures();
         this.currentMakeupType = enabledFeatures[0] || null;
       }
     } else {
-      // استفاده از اولین نوع مجاز
+      // Use first allowed type
       const enabledFeatures = this.featureManager.getEnabledFeatures();
       this.currentMakeupType = enabledFeatures[0] || null;
     }
   }
 
   /**
-   * راه‌اندازی حالت مناسب
+   * Initialize appropriate mode
    * @private
    */
   async _initializeMode() {
@@ -235,11 +237,11 @@ class Makeup {
   }
 
   /**
-   * راه‌اندازی رابط کاربری
+   * Initialize UI
    * @private
    */
   _initializeUI() {
-    // راه‌اندازی رابط انتخاب رنگ
+    // Initialize color picker
     if (this.options.showColorPicker) {
       let colors = [];
 
@@ -264,13 +266,13 @@ class Makeup {
       }
     }
 
-    // راه‌اندازی کنترل‌های دوربین
+    // Initialize camera controls
     initCameraControls(this.mediaFeatures);
   }
 
   /**
-   * پردازش نتایج تشخیص چهره
-   * @param {Object} landmarks - نقاط مرزی چهره
+   * Process face detection results
+   * @param {Object} landmarks - Face landmarks
    * @private
    */
   _onResults(landmarks) {
@@ -287,33 +289,33 @@ class Makeup {
         }
       }
     } catch (error) {
-      console.error(`خطا در پردازش نتایج: ${error.message}`);
+      console.error(`Error processing results: ${error.message}`);
       this.uiManager.showErrorMessage(
-        "خطا در پردازش تصویر",
-        "مشکلی در پردازش تصویر رخ داده است."
+        "Image Processing Error",
+        "An error occurred while processing the image."
       );
     }
   }
 
-  // --- متدهای عمومی ---
+  // --- Public methods ---
 
   /**
-   * تغییر نوع آرایش
-   * @param {string} type - نوع آرایش
-   * @returns {boolean} موفقیت یا عدم موفقیت عملیات
+   * Change makeup type
+   * @param {string} type - Makeup type
+   * @returns {boolean} Success status
    */
   changeMakeupType(type) {
     if (!this.featureManager.isFeatureEnabled(type)) {
       this.uiManager.showErrorMessage(
-        "دسترسی محدود",
-        `ویژگی ${type} برای این کاربر فعال نیست`
+        "Limited Access",
+        `Feature ${type} is not enabled for this user`
       );
       return false;
     }
 
     this.currentMakeupType = type;
 
-    // تنظیم الگوی پیش‌فرض
+    // Set default pattern
     const allowedPatterns = this.featureManager.getAllowedPatterns(type);
     if (allowedPatterns.length > 0) {
       this.setMakeupPattern(type, allowedPatterns[0]);
@@ -323,11 +325,11 @@ class Makeup {
   }
 
   /**
-   * تغییر رنگ آرایش
-   * @param {string} type - نوع آرایش
-   * @param {string} color - رنگ
-   * @param {string} code - کد رنگ (اختیاری)
-   * @returns {boolean} موفقیت یا عدم موفقیت عملیات
+   * Change makeup color
+   * @param {string} type - Makeup type
+   * @param {string} color - Color
+   * @param {string} code - Color code (optional)
+   * @returns {boolean} Success status
    */
   changeMakeupColor(type, color, code = null) {
     return this.modeManager.changeMakeupColor(
@@ -338,10 +340,10 @@ class Makeup {
   }
 
   /**
-   * تنظیم الگوی آرایش
-   * @param {string} type - نوع آرایش
-   * @param {string} pattern - الگو
-   * @returns {boolean} موفقیت یا عدم موفقیت عملیات
+   * Set makeup pattern
+   * @param {string} type - Makeup type
+   * @param {string} pattern - Pattern
+   * @returns {boolean} Success status
    */
   setMakeupPattern(type, pattern) {
     return this.modeManager.setMakeupPattern(
@@ -351,10 +353,10 @@ class Makeup {
   }
 
   /**
-   * تنظیم شفافیت آرایش
-   * @param {string} type - نوع آرایش
-   * @param {number} transparency - شفافیت (0-1)
-   * @returns {boolean} موفقیت یا عدم موفقیت عملیات
+   * Set makeup transparency
+   * @param {string} type - Makeup type
+   * @param {number} transparency - Transparency (0-1)
+   * @returns {boolean} Success status
    */
   setMakeupTransparency(type, transparency) {
     return this.modeManager.setMakeupTransparency(
@@ -364,34 +366,34 @@ class Makeup {
   }
 
   /**
-   * بارگذاری محصول با شناسه
-   * @param {string} productUid - شناسه محصول
-   * @returns {Promise<Object|null>} اطلاعات محصول یا null در صورت خطا
+   * Load product by UID
+   * @param {string} productUid - Product UID
+   * @returns {Promise<Object|null>} Product info or null if error
    */
   async loadProduct(productUid) {
     return await this.productLoader.loadProduct(productUid);
   }
 
   /**
-   * تغییر حالت SDK (دوربین/تصویر)
-   * @param {string} newMode - حالت جدید
-   * @returns {Promise<boolean>} نتیجه تغییر حالت
+   * Switch SDK mode (camera/image)
+   * @param {string} newMode - New mode
+   * @returns {Promise<boolean>} Result of mode change
    */
   async switchMode(newMode) {
     return await this.modeManager.switchMode(newMode);
   }
 
   /**
-   * دریافت وضعیت فعلی SDK
-   * @returns {string} وضعیت فعلی
+   * Get current SDK status
+   * @returns {string} Current status
    */
   getStatus() {
     return this.status;
   }
 
   /**
-   * دریافت اطلاعات فنی SDK
-   * @returns {Object} اطلاعات فنی
+   * Get SDK technical info
+   * @returns {Object} Technical info
    */
   getTechnicalInfo() {
     return {
@@ -418,33 +420,33 @@ class Makeup {
   }
 
   /**
-   * دریافت ویژگی‌های مجاز
-   * @returns {Array} آرایه‌ای از ویژگی‌های مجاز
+   * Get allowed features
+   * @returns {Array} Array of allowed features
    */
   getAvailableFeatures() {
     return this.featureManager?.getEnabledFeatures() || [];
   }
 
   /**
-   * دریافت الگوهای مجاز برای یک ویژگی
-   * @param {string} feature - نام ویژگی
-   * @returns {Array} آرایه‌ای از الگوهای مجاز
+   * Get allowed patterns for a feature
+   * @param {string} feature - Feature name
+   * @returns {Array} Array of allowed patterns
    */
   getAvailablePatterns(feature) {
     return this.featureManager?.getAllowedPatterns(feature) || [];
   }
 
   /**
-   * بررسی دسترسی به ویژگی
-   * @param {string} feature - نام ویژگی
-   * @returns {boolean} نتیجه بررسی
+   * Check if feature is enabled
+   * @param {string} feature - Feature name
+   * @returns {boolean} Check result
    */
   isFeatureEnabled(feature) {
     return this.featureManager?.isFeatureEnabled(feature) || false;
   }
 
   /**
-   * پاکسازی منابع
+   * Clean up resources
    */
   cleanup() {
     this.status = Makeup.STATUS.CLEANUP;
