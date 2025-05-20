@@ -69,7 +69,42 @@ function initializeSDK() {
         );
         return;
       }
-      return new Makeup(options);
+
+      // بررسی productUid
+      if (options.productUid) {
+        // اگر productUid ارسال شده، پارامترهای قدیمی را حذف می‌کنیم
+        const validOptions = { ...options };
+
+        // حذف پارامترهای قدیمی که دیگر استفاده نمی‌شوند
+        if (validOptions.colors) {
+          console.warn(
+            "پارامتر colors با استفاده از productUid نادیده گرفته می‌شود"
+          );
+          delete validOptions.colors;
+        }
+
+        if (validOptions.face) {
+          console.warn(
+            "پارامتر face با استفاده از productUid نادیده گرفته می‌شود"
+          );
+          delete validOptions.face;
+        }
+
+        if (validOptions.pattern) {
+          console.warn(
+            "پارامتر pattern با استفاده از productUid نادیده گرفته می‌شود"
+          );
+          delete validOptions.pattern;
+        }
+
+        return new Makeup(validOptions);
+      } else {
+        // اگر productUid ارسال نشده، اخطار می‌دهیم اما همچنان SDK را راه‌اندازی می‌کنیم
+        console.warn(
+          "توصیه می‌شود از productUid برای راه‌اندازی SDK استفاده کنید"
+        );
+        return new Makeup(options);
+      }
     };
   }
 }
