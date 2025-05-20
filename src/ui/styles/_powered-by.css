@@ -1,0 +1,81 @@
+/* _powered-by.css */
+
+/* استایل‌های دکمه */
+.armo-sdk-info-button {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 100000000000;
+  cursor: pointer;
+}
+
+/* افکت hover برای دکمه */
+.armo-sdk-info-button:hover {
+  transform: scale(1.05);
+}
+
+/* استایل ایکون درون دکمه */
+.armo-sdk-info-button img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* باکس Powered by */
+.armo-sdk-powered-by {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  z-index: 100000000000;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: none;
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+/* کلاس حالت نمایش */
+.armo-sdk-powered-by.show {
+  display: block;
+  opacity: 1;
+  transform: translateX(0);
+  animation: slideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* انیمیشن‌ها */
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}

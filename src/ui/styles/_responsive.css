@@ -1,0 +1,171 @@
+/*! _responsive.css */
+
+/* Mobile Small - تلفن‌های کوچک */
+@media (max-width: 320px) {
+  .armo-sdk-wrapper {
+    padding: 0;
+  }
+
+  .armo-sdk-container {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  .armo-sdk-controls {
+    bottom: 16px;
+    padding: 0 12px;
+  }
+
+  .armo-sdk-color {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Mobile Regular - تلفن‌های معمولی */
+@media (min-width: 321px) and (max-width: 480px) {
+  .armo-sdk-wrapper {
+    padding: 0;
+  }
+
+  .armo-sdk-container {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  .armo-sdk-controls {
+    bottom: 20px;
+    padding: 0 16px;
+  }
+
+  .armo-sdk-color {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+/* Mobile Large - تلفن‌های بزرگ */
+@media (min-width: 481px) and (max-width: 767px) {
+  .armo-sdk-wrapper {
+    padding: 12px;
+  }
+
+  .armo-sdk-container {
+    width: calc(100vw - 24px);
+    height: calc(100vh - 24px);
+    border-radius: 32px;
+  }
+
+  .armo-sdk-controls {
+    bottom: 20px;
+  }
+}
+
+/* Tablet - تبلت */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .armo-sdk-wrapper {
+    padding: 16px;
+  }
+
+  .armo-sdk-container {
+    width: calc(100vw - 32px);
+    height: calc(100vh - 32px);
+    max-height: 1037px;
+    border-radius: 40px;
+  }
+
+  .armo-sdk-controls {
+    bottom: 24px;
+  }
+}
+
+/* Laptop - لپ‌تاپ */
+@media (min-width: 1025px) and (max-width: 1366px) {
+  .armo-sdk-wrapper {
+    padding: 20px;
+  }
+
+  .armo-sdk-container {
+    width: min(1080px, calc(100vw - 40px));
+    height: min(1037px, calc(100vh - 40px));
+    border-radius: 48px;
+  }
+}
+
+/* Desktop - دسکتاپ */
+@media (min-width: 1367px) {
+  .armo-sdk-wrapper {
+    max-width: 1080px;
+    padding: 24px;
+  }
+
+  .armo-sdk-container {
+    width: 1080px;
+    height: 1037px;
+    border-radius: 48px;
+  }
+}
+
+/* Landscape Mode - حالت افقی در موبایل */
+@media (max-width: 920px) and (orientation: landscape) {
+  .armo-sdk-wrapper {
+    padding: 0;
+  }
+
+  .armo-sdk-container {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  .armo-sdk-controls {
+    bottom: 16px;
+  }
+}
+
+/* High-DPI Screens - نمایشگرهای با رزولوشن بالا */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .armo-sdk-container {
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Dark Mode Support - پشتیبانی از حالت تاریک */
+@media (prefers-color-scheme: dark) {
+  .armo-sdk-container {
+    background-color: #000;
+  }
+}
+
+/* Print Media - رسانه چاپی */
+@media print {
+  .armo-sdk-wrapper {
+    display: none;
+  }
+}
+
+/* Hover Support - پشتیبانی از hover */
+@media (hover: hover) {
+  .armo-sdk-color:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Touch Support - پشتیبانی از لمس */
+@media (hover: none) {
+  .armo-sdk-color:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Safe Area Insets - حاشیه‌های امن برای گوشی‌های جدید */
+@supports (padding: max(0px)) {
+  .armo-sdk-container {
+    padding-left: max(24px, env(safe-area-inset-left));
+    padding-right: max(24px, env(safe-area-inset-right));
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+}

@@ -1,0 +1,66 @@
+/* src/ui/styles/_comparison.css */
+
+.armo-sdk-comparison-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.armo-sdk-comparison-divider {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 100%;
+  display: none;
+  transform: translateX(-50%);
+  pointer-events: auto;
+  cursor: ew-resize;
+}
+
+.armo-sdk-comparison-divider.active {
+  display: flex;
+  align-items: center;
+}
+
+.armo-sdk-divider-line {
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.armo-sdk-divider-line {
+  position: absolute;
+  width: 4px;
+  height: 719px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0) 0%,
+    #ffffff 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* .armo-sdk-arrow {
+  color: #333;
+  font-size: 32px;
+  user-select: none;
+} */
+
+.armo-sdk-comparison-divider.dragging .armo-sdk-divider-handle {
+  background-color: #f0f0f0;
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.armo-sdk-comparison-divider.dragging .armo-sdk-divider-line {
+  background-color: rgba(255, 255, 255, 1);
+}

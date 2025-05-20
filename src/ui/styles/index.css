@@ -1,0 +1,81 @@
+/* index.css */
+
+@import "./_base.css";
+@import "./_layout.css";
+@import "./_controls.css";
+@import "./_colorPicker.css";
+@import "./_loading.css";
+@import "./_messages.css";
+@import "./_toast.css";
+@import "./_responsive.css";
+@import "./_powered-by.css";
+@import "./_cameraControls.css";
+@import "./_comparison.css";
+@import "./_imageUpload.css";
+
+/* Override styles and global animations */
+:root {
+  --primary-color: #5e35b1;
+  --error-color: #dc3545;
+  --warning-color: #ffc107;
+  --success-color: #28a745;
+  --info-color: #17a2b8;
+}
+
+/* Global Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Basic Utility Classes */
+.armo-sdk-hidden {
+  display: none !important;
+}
+
+.armo-sdk-visible {
+  display: block !important;
+}
+
+.armo-sdk-transparent {
+  opacity: 0 !important;
+}
+
+.armo-sdk-opaque {
+  opacity: 1 !important;
+}

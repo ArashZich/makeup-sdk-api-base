@@ -1,0 +1,71 @@
+/*! _base.css */
+
+@font-face {
+  font-family: "IRANSans";
+  src: url("https://armogroup.storage.iran.liara.space/fonts/IranSans/IRANSansWeb%28FaNum%29_Medium.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PublicSans";
+  src: url("https://armogroup.storage.iran.liara.space/fonts/Public_Sans/PublicSans-Medium.ttf")
+    format("ttf");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PublicSans";
+  src: url("https://armogroup.storage.iran.liara.space/fonts/Public_Sans/PublicSans-SemiBold.ttf")
+    format("ttf");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "IRANSans", "PublicSans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: #000;
+}
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+button:focus {
+  outline: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+* {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

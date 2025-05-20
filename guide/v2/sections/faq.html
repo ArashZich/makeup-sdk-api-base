@@ -1,0 +1,280 @@
+<section class="faq">
+  <h2>سوالات متداول</h2>
+
+  <!-- سوالات عمومی -->
+  <div class="faq-section">
+    <h3>سوالات عمومی</h3>
+
+    <div class="faq-item">
+      <h4>آیا می‌توانم SDK را به صورت آفلاین استفاده کنم؟</h4>
+      <div class="answer">
+        <p>خیر، SDK نیاز به اتصال اینترنت دارد زیرا باید:</p>
+        <ul>
+          <li>توکن به صورت آنلاین اعتبارسنجی شود</li>
+          <li>منابع مورد نیاز از CDN بارگیری شوند</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>چه مرورگرهایی پشتیبانی می‌شوند؟</h4>
+      <div class="answer">
+        <p>مرورگرهای مدرن با نسخه‌های زیر پشتیبانی می‌شوند:</p>
+        <ul>
+          <li>Chrome نسخه 88 و بالاتر</li>
+          <li>Firefox نسخه 85 و بالاتر</li>
+          <li>Safari نسخه 14 و بالاتر</li>
+          <li>Edge نسخه 88 و بالاتر</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- سوالات فنی -->
+  <div class="faq-section">
+    <h3>سوالات فنی</h3>
+
+    <div class="faq-item">
+      <h4>چرا دوربین کار نمی‌کند؟</h4>
+      <div class="answer">
+        <p>موارد زیر را بررسی کنید:</p>
+        <ul>
+          <li>مجوز دسترسی به دوربین در مرورگر</li>
+          <li>اتصال HTTPS در محیط وب</li>
+          <li>عدم استفاده همزمان دوربین توسط برنامه‌های دیگر</li>
+        </ul>
+        <div class="code-example">
+          <pre><code>// بررسی دسترسی به دوربین
+if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    console.error("دوربین در این مرورگر پشتیبانی نمی‌شود");
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>چگونه می‌توانم کیفیت تشخیص چهره را بهبود دهم؟</h4>
+      <div class="answer">
+        <ol>
+          <li>از نور کافی و مناسب استفاده کنید</li>
+          <li>مستقیم به دوربین نگاه کنید</li>
+          <li>فاصله مناسب (30-60 سانتیمتر) را حفظ کنید</li>
+          <li>از پس‌زمینه ساده استفاده کنید</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>چه تفاوتی بین استایل‌های مختلف خط چشم وجود دارد؟</h4>
+      <div class="answer">
+        <p>SDK آرایش مجازی دو استایل متفاوت برای خط چشم ارائه می‌دهد:</p>
+        <ul>
+          <li>
+            <strong>normal:</strong> خط چشم استاندارد که در امتداد مژه‌های
+            بالایی کشیده می‌شود.
+          </li>
+          <li>
+            <strong>lashed:</strong> خط چشم ضخیم‌تر با افکت مژه‌های بلند که
+            ظاهری شبیه به مژه‌های مصنوعی ایجاد می‌کند.
+          </li>
+        </ul>
+        <div class="code-example">
+          <pre><code>// تنظیم استایل خط چشم
+makeupApp.changeMakeupType("eyeliner");
+makeupApp.setMakeupPattern("eyeliner", "lashed");
+
+// تنظیم ضخامت خط چشم
+makeupApp.setMakeupTransparency("eyeliner", 0.7);</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>چگونه وضعیت SDK را مانیتور کنم؟</h4>
+      <div class="answer">
+        <div class="code-example">
+          <pre><code>// روش 1: استفاده از getStatus
+const status = makeupApp.getStatus();
+
+// روش 2: استفاده از callbacks
+const makeup = new window.Makeup({
+    onReady: () => console.log("SDK آماده است"),
+    onError: (error) => console.error("خطا:", error)
+});</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- سوالات پیاده‌سازی -->
+  <div class="faq-section">
+    <h3>سوالات پیاده‌سازی</h3>
+
+    <div class="faq-item">
+      <h4>چگونه می‌توانم از رنگ‌های سفارشی استفاده کنم؟</h4>
+      <div class="answer">
+        <p>دو روش وجود دارد:</p>
+        <div class="code-example">
+          <pre><code>// روش 1: تعریف رنگ‌ها در زمان راه‌اندازی
+const makeup = new window.Makeup({
+    colors: [
+        { code: "01", color: "#FF0000" },
+        { code: "02", color: "#00FF00", url: "path/to/image.jpg" }
+    ]
+});
+
+// روش 2: تغییر مستقیم رنگ
+makeupApp.changeMakeupColor("lips", "#FF0000");</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>چگونه لودینگ سفارشی تعریف کنم؟</h4>
+      <div class="answer">
+        <p>با استفاده از المان با ID خاص:</p>
+        <div class="code-example">
+          <pre><code>&lt;div id="armo-sdk-custom-loading"&gt;
+    &lt;div class="loading-spinner"&gt;&lt;/div&gt;
+    &lt;p&gt;در حال بارگذاری...&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- سوالات استخراج رنگ -->
+  <div class="faq-section">
+    <h3>سوالات استخراج رنگ از تصاویر</h3>
+
+    <div class="faq-item">
+      <h4>
+        آیا می‌توانم از تصاویر با فرمت‌های مختلف برای استخراج رنگ استفاده کنم؟
+      </h4>
+      <div class="answer">
+        <p>
+          بله، SDK از فرمت‌های استاندارد تصویر مانند JPG، PNG و WebP پشتیبانی
+          می‌کند. برای نتایج بهتر، تصاویر با کیفیت بالا و با زمینه ساده توصیه
+          می‌شود.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>چه محدودیت‌هایی برای استخراج رنگ از تصاویر وجود دارد؟</h4>
+      <div class="answer">
+        <ul>
+          <li>تصویر باید دسترسی CORS داشته باشد</li>
+          <li>تصاویر خیلی بزرگ ممکن است زمان پردازش بیشتری نیاز داشته باشند</li>
+          <li>
+            کیفیت پایین تصویر می‌تواند بر دقت استخراج رنگ تأثیر منفی بگذارد
+          </li>
+          <li>پس‌زمینه‌های پیچیده ممکن است رنگ استخراج شده را منحرف کنند</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>آیا می‌توانم رنگ‌های متعددی را از یک تصویر استخراج کنم؟</h4>
+      <div class="answer">
+        <p>
+          در حال حاضر، SDK فقط رنگ غالب را از هر تصویر استخراج می‌کند. برای
+          استخراج چند رنگ مختلف، می‌توانید از تصاویر متفاوت استفاده کنید یا
+          رنگ‌ها را به صورت دستی تعیین کنید.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>اگر استخراج رنگ با خطا مواجه شود، چه اتفاقی می‌افتد؟</h4>
+      <div class="answer">
+        <p>
+          در صورت بروز خطا در استخراج رنگ (مثلاً به دلیل مشکلات CORS، تصویر
+          نامعتبر، یا تصویر بسیار کوچک)، SDK به طور خودکار از رنگ خاکستری
+          (#808080) به عنوان پشتیبان استفاده می‌کند. همچنین خطا در کنسول مرورگر
+          لاگ می‌شود.
+        </p>
+        <div class="code-example">
+          <pre><code>// مدیریت خطا در استخراج رنگ
+makeupApp.addColorFromImage("https://example.com/invalid-image.jpg", "ERR_CODE")
+    .then(color => {
+        console.log(`رنگ استخراج شده یا پشتیبان: ${color}`);
+    })
+    .catch(error => {
+        // در عمل این بلاک اجرا نمی‌شود زیرا SDK خودش خطا را مدیریت می‌کند
+        // اما برای اطمینان می‌توان آن را اضافه کرد
+        console.error("خطا در استخراج رنگ:", error);
+    });</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- عیب‌یابی -->
+  <div class="faq-section">
+    <h3>عیب‌یابی</h3>
+
+    <div class="faq-item">
+      <h4>پیام "توکن نامعتبر است" دریافت می‌کنم</h4>
+      <div class="answer">
+        <ol>
+          <li>از معتبر بودن توکن اطمینان حاصل کنید</li>
+          <li>تاریخ انقضای توکن را بررسی کنید</li>
+          <li>
+            توکن را قبل از ایجاد نمونه SDK تنظیم کنید:
+            <pre><code>window.Makeup.token = "YOUR_TOKEN";
+const makeup = new window.Makeup(...);</code></pre>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>در موبایل تصویر وارونه نمایش داده می‌شود</h4>
+      <div class="answer">
+        <p>این مشکل با افزودن CSS زیر برطرف می‌شود:</p>
+        <div class="code-example">
+          <pre><code>.armo-sdk-input-video {
+    transform: scaleX(-1);
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>خطای CORS هنگام استخراج رنگ از تصویر دریافت می‌کنم</h4>
+      <div class="answer">
+        <p>
+          این خطا زمانی رخ می‌دهد که سرور میزبان تصویر، اجازه دسترسی به منابع
+          خود را از دامنه شما نمی‌دهد. برای رفع این مشکل:
+        </p>
+        <ol>
+          <li>تصاویر را در همان دامنه وب‌سایت خود میزبانی کنید</li>
+          <li>
+            از سرویس‌هایی استفاده کنید که هدرهای CORS مناسب را ارائه می‌دهند
+          </li>
+          <li>از یک پروکسی CORS در سمت سرور استفاده کنید</li>
+          <li>
+            با مالک سرویس میزبانی تصویر تماس بگیرید و درخواست کنید هدرهای CORS
+            مناسب را تنظیم کند
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- بخش پشتیبانی -->
+  <div class="support-section">
+    <h3>نیاز به پشتیبانی دارید؟</h3>
+    <p>
+      اگر پاسخ سوال خود را پیدا نکردید، می‌توانید از طریق راه‌های زیر با ما در
+      تماس باشید:
+    </p>
+    <div class="contact-info">
+      <p>تلفن همراه: <a href="tel:09370180730">09370180730</a></p>
+      <p>تلفن ثابت: <a href="tel:02128424173">02128424173</a></p>
+      <p>ایمیل: <a href="mailto:info@armogroup.tech">info@armogroup.tech</a></p>
+    </div>
+  </div>
+  <div class="update-date">آخرین به‌روزرسانی: ۱۷ اردیبهشت ۱۴۰۴</div>
+</section>

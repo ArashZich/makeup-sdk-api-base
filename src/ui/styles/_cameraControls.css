@@ -1,0 +1,120 @@
+/*! Camera Controls */
+
+.armo-sdk-camera-controls {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 10;
+}
+
+.armo-sdk-camera-control-button {
+  width: 56px;
+  height: 56px;
+  border-radius: 32px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.armo-sdk-camera-control-button:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.armo-sdk-camera-control-button img {
+  width: 100%;
+  height: 100%;
+  filter: brightness(0) invert(1);
+  transition: all 0.3s ease;
+}
+
+.armo-sdk-camera-control-button.active {
+  background: #ffffff;
+}
+
+.armo-sdk-camera-control-button.active img {
+  filter: brightness(0); /* این رو تغییر دادم از none به brightness(0) */
+}
+
+.armo-sdk-capture-button {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 32px;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  animation: pulseAndShake 3s ease-in-out infinite;
+}
+
+.armo-sdk-capture-button img {
+  width: 100%;
+  height: 100%;
+  filter: brightness(0) invert(1);
+  padding: 0;
+  margin: 0;
+  object-fit: cover;
+  border-radius: 32px;
+}
+
+.armo-sdk-capture-button:hover {
+  background: rgba(0, 0, 0, 0.6);
+  animation: none;
+  transform: scale(1.05);
+}
+
+.armo-sdk-capture-button:active {
+  transform: scale(0.95);
+}
+
+@keyframes pulseAndShake {
+  0% {
+    transform: scale(1);
+  }
+
+  /* نبض اول */
+  15% {
+    transform: scale(1.1);
+  }
+  20% {
+    transform: scale(1);
+  }
+
+  /* تکان آرام */
+  40% {
+    transform: translateX(-3px);
+  }
+  45% {
+    transform: translateX(3px);
+  }
+  50% {
+    transform: translateX(0);
+  }
+
+  /* نبض دوم */
+  70% {
+    transform: scale(1.1);
+  }
+  75% {
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}

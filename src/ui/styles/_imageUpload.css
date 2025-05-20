@@ -1,0 +1,139 @@
+/* _imageUpload.css */
+
+.armo-sdk-upload-area {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+}
+
+.armo-sdk-upload-area.active {
+  display: flex;
+}
+
+.armo-sdk-upload-container {
+  width: 90%;
+  max-width: 480px;
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 24px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.armo-sdk-upload-container.drag-over {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.02);
+}
+
+.armo-sdk-upload-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+}
+
+.armo-sdk-upload-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+}
+
+.armo-sdk-upload-text {
+  color: white;
+  font-size: 16px;
+  margin-bottom: 24px;
+}
+
+.armo-sdk-upload-text span {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  display: block;
+  margin-top: 8px;
+}
+
+.armo-sdk-upload-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.armo-sdk-upload-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.armo-sdk-upload-button:active {
+  transform: translateY(0);
+}
+
+.armo-sdk-upload-input {
+  display: none;
+}
+
+.armo-sdk-close-upload {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.armo-sdk-close-upload:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+.armo-sdk-close-upload img {
+  width: 24px;
+  height: 24px;
+  filter: brightness(0) invert(1);
+}
+
+/* رسپانسیو */
+@media (max-width: 768px) {
+  .armo-sdk-upload-container {
+    padding: 24px;
+  }
+
+  .armo-sdk-upload-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+  }
+
+  .armo-sdk-upload-text {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .armo-sdk-upload-text span {
+    font-size: 12px;
+  }
+
+  .armo-sdk-close-upload {
+    top: 16px;
+    right: 16px;
+  }
+}
