@@ -96,18 +96,24 @@ export class ApiHandler {
    */
   _mapProductInfoToSDKFormat(productInfo) {
     // تبدیل رنگ‌های محصول به فرمت مورد نیاز SDK
-    const colors = productInfo.colors.map((color) => ({
-      code: color.name,
-      color: color.hexCode,
-      url: color.imageUrl,
-      feature: productInfo.type, // نوع محصول به عنوان ویژگی
+    // API response: { "code": "گل رز طبیعی", "color": "#D1919F", "feature": "lips" }
+    // SDK expects: { code: "نمایش نام رنگ", color: "مقدار هگز", url?: "...", feature: "lips" }
+    const colors = productInfo.colors.map((apiColor) => ({
+      code: apiColor.name, // نام نمایشی رنگ از API
+      color: apiColor.hexCode, // مقدار هگز رنگ از API
+      url: apiColor.imageUrl, // اگر imageUrl در پاسخ API برای رنگ‌ها وجود دارد
+      feature: apiColor.feature || productInfo.type, // ویژگی مرتبط
     }));
 
+    console.log(colors, "LOPPPPP");
+
     // تبدیل پترن‌های محصول به فرمت مورد نیاز SDK
-    const patterns = productInfo.patterns.map((pattern) => ({
-      name: pattern.name,
-      code: pattern.code,
-      imageUrl: pattern.imageUrl,
+    // API response: { "name": "براق", "code": "GLOSSY", "imageUrl": "..." }
+    // SDK expects: { name: "براق", code: "GLOSSY", imageUrl: "..." }
+    const patterns = productInfo.patterns.map((apiPattern) => ({
+      name: apiPattern.name,
+      code: apiPattern.code,
+      imageUrl: apiPattern.imageUrl,
     }));
 
     return {
@@ -116,7 +122,7 @@ export class ApiHandler {
       name: productInfo.name,
       description: productInfo.description,
       type: productInfo.type,
-      code: productInfo.code,
+      code: productInfo.code, // کد خود محصول
       thumbnail: productInfo.thumbnail,
       colors,
       patterns,

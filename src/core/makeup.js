@@ -247,8 +247,8 @@ class Makeup {
 
       if (this.productManager && this.productManager.hasValidProduct()) {
         colors = this.productManager.getColors().map((color) => ({
-          code: color.name,
-          color: color.hexCode,
+          code: color.code,
+          color: color.color,
           url: color.imageUrl,
           feature: this.productManager.getProductType(),
         }));
