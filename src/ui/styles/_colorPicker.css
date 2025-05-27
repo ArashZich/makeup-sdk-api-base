@@ -101,6 +101,12 @@
   font-size: 14px;
   line-height: 22px;
   color: inherit;
+  display: inline-block; /* این به کنترل بهتر عرض و تراز بندی متنِ چند خطی کمک می‌کنه */
+  max-width: 100%; /* تضمین می‌کنه که عرض این اِلمان از عرض داخلی دکمه بیشتر نشه */
+  word-wrap: break-word; /* برای مرورگرهای قدیمی‌تر جهت شکستن کلمات طولانی */
+  overflow-wrap: break-word; /* خاصیت استاندارد برای شکستن کلمات طولانی و جلوگیری از سرریز */
+  white-space: normal; /* اجازه می‌ده متن به طور عادی (در فاصله‌ها و با توجه به break-word) به خط بعدی بره */
+  text-align: center;
 }
 
 /* Hover effects */

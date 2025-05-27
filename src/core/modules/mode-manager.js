@@ -3,6 +3,8 @@
 import { setupFaceMesh, cleanup } from "../methods/faceMesh";
 import { ImageManager } from "../methods/imageManager";
 import { initImageUpload } from "../../ui";
+// این خط رو اضافه کنید
+import { changeMakeupColor as handleMakeupColorChange } from "../methods/makeupHandle";
 
 /**
  * کلاس مدیریت حالت‌های SDK
@@ -21,10 +23,25 @@ export class ModeManager {
 
     this.featureManager = managers.featureManager;
     this.uiManager = managers.uiManager;
+    // اگر RenderManager یا ImageManager هم در managers پاس داده می‌شن، اونها رو هم اینجا نگه دارید
+    // مثال: this.renderManager = managers.renderManager;
+    if (managers.comparisonManager && elements.canvasElement) {
+      this.imageManager = new ImageManager(
+        elements.canvasElement,
+        managers.featureManager,
+        managers.comparisonManager
+      );
+    } else if (elements.canvasElement) {
+      this.imageManager = new ImageManager(
+        elements.canvasElement,
+        managers.featureManager,
+        null
+      );
+    }
 
     this.cameraStream = null;
     this.faceMeshInstance = null;
-    this.imageManager = null;
+    // this.imageManager = null; // این خط رو بررسی کنید، شاید باید از managers بیاد یا اینجا new بشه
     this.onResultsCallback = null;
   }
 
@@ -34,6 +51,41 @@ export class ModeManager {
    */
   setOnResultsCallback(callback) {
     this.onResultsCallback = callback;
+  }
+
+  /**
+   * تغییر رنگ آرایش بر اساس حالت فعلی
+   * @param {string} type - نوع آرایش (e.g., 'lips', 'eyeshadow')
+   * @param {string} color - کد هگز رنگ
+   * @param {string} [code=null] - کد نام رنگ (اختیاری)
+   */
+  changeMakeupColor(type, color, code = null) {
+    if (!type || !color) {
+      console.warn("نوع یا رنگ آرایش برای تغییر مشخص نشده است.");
+      return false;
+    }
+
+    // ۱. به‌روزرسانی وضعیت رنگ در ماژول‌های آرایش (برای رندر دوربین)
+    // این تابع، متغیرهای گلوبال رنگ در هر ماژول آرایش (مثلا lipstickColor در lips.js) رو آپدیت می‌کنه
+    handleMakeupColorChange(type, color);
+
+    // ۲. اگر در حالت تصویر هستیم، تصویر رو با رنگ جدید آپدیت می‌کنیم
+    if (this.options.mode === "image" && this.imageManager) {
+      // فرض می‌کنیم ImageManager متدهای لازم برای دریافت پترن و شفافیت فعلی خودش رو داره
+      // یا اینکه این مقادیر از یک جای مرکزی دیگه خونده میشن
+      this.imageManager.updateMakeup(
+        type,
+        color,
+        this.imageManager.currentPattern, // یا مقدار پیش‌فرض/فعلی پترن
+        this.imageManager.currentTransparency // یا مقدار پیش‌فرض/فعلی شفافیت
+      );
+    }
+    // در حالت دوربین، حلقه رندر خودکار تغییرات رو اعمال می‌کنه
+    // چون از متغیرهای گلوبال آپدیت شده توسط handleMakeupColorChange استفاده می‌کنه
+
+    // برای اطمینان، می‌تونید یک event هم emit کنید اگر سایر بخش‌ها نیاز به اطلاع از تغییر رنگ دارن
+    // document.dispatchEvent(new CustomEvent('makeupColorChanged', { detail: { type, color, code } }));
+    return true;
   }
 
   /**
@@ -190,9 +242,12 @@ export class ModeManager {
 
       // ایجاد یا بازیابی imageManager
       if (!this.imageManager) {
+        // پاس دادن comparisonManager اگر وجود دارد
+        const comparisonManager = this.options.comparisonManager || null;
         this.imageManager = new ImageManager(
           this.canvasElement,
-          this.featureManager
+          this.featureManager,
+          comparisonManager
         );
       }
 
@@ -205,12 +260,15 @@ export class ModeManager {
 
           if (success) {
             // در صورت موفقیت، اعمال تنظیمات فعلی آرایش روی عکس
-            if (this.options.currentMakeupType) {
+            if (this.options.currentMakeupType && this.options.currentColor) {
+              // اطمینان از وجود هر دو
               this.imageManager.updateMakeup(
                 this.options.currentMakeupType,
                 this.options.currentColor,
-                this.options.currentPattern,
-                this.options.transparency
+                this.options.currentPattern || this.imageManager.currentPattern, // استفاده از پترن imageManager اگر آپشن موجود نیست
+                this.options.transparency === undefined
+                  ? this.imageManager.currentTransparency
+                  : this.options.transparency // استفاده از شفافیت imageManager اگر آپشن موجود نیست
               );
             }
           } else {
