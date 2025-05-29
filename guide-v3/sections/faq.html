@@ -1,0 +1,227 @@
+<h1>سوالات متداول</h1>
+
+<p>پاسخ به رایج‌ترین سوالات درباره SDK آرایش مجازی v3</p>
+
+<h2>نصب و راه‌اندازی</h2>
+
+<div class="step">
+  <h3>❓ چطور Token و Product UID دریافت کنم؟</h3>
+  <p>
+    <strong>پاسخ:</strong> باید در سایت ARmo ثبت‌نام کنید، محصول بسازید و از پنل
+    مدیریت Token و Product UID را کپی کنید.
+  </p>
+</div>
+
+<div class="step">
+  <h3>❓ SDK روی HTTP کار می‌کند؟</h3>
+  <p>
+    <strong>پاسخ:</strong> خیر، به دلیل امنیت دوربین، فقط روی HTTPS کار می‌کند.
+    localhost مستثنی است.
+  </p>
+</div>
+
+<div class="step">
+  <h3>❓ چه مرورگرهایی پشتیبانی می‌شوند؟</h3>
+  <p>
+    <strong>پاسخ:</strong> Chrome 60+، Firefox 55+، Safari 11+، Edge 79+.
+    Internet Explorer پشتیبانی نمی‌شود.
+  </p>
+</div>
+
+<h2>عملکرد و مشکلات</h2>
+
+<div class="step">
+  <h3>❓ دوربین کار نمی‌کند، چه کنم؟</h3>
+  <p><strong>پاسخ:</strong></p>
+  <ul>
+    <li>مطمئن شوید روی HTTPS هستید</li>
+    <li>اجازه دسترسی به دوربین را بدهید</li>
+    <li>دوربین توسط برنامه دیگری استفاده نشود</li>
+    <li>Console مرورگر را برای خطاها چک کنید</li>
+  </ul>
+</div>
+
+<div class="step">
+  <h3>❓ SDK کند کار می‌کند، چرا؟</h3>
+  <p><strong>پاسخ:</strong></p>
+  <ul>
+    <li>اتصال اینترنت را بررسی کنید</li>
+    <li>از مرورگر به‌روز استفاده کنید</li>
+    <li>Tab های اضافی را ببندید</li>
+    <li>سخت‌افزار ضعیف ممکن است تأثیر بگذارد</li>
+  </ul>
+</div>
+
+<div class="step">
+  <h3>❓ چهره تشخیص داده نمی‌شود؟</h3>
+  <p><strong>پاسخ:</strong></p>
+  <ul>
+    <li>نور کافی داشته باشید</li>
+    <li>مستقیم به دوربین نگاه کنید</li>
+    <li>فاصله مناسب با دوربین داشته باشید</li>
+    <li>موهایتان صورت را نپوشاند</li>
+  </ul>
+</div>
+
+<h2>توسعه و کدنویسی</h2>
+
+<div class="step">
+  <h3>❓ چطور در React استفاده کنم؟</h3>
+  <p>
+    <strong>پاسخ:</strong> از Hook که در بخش React توضیح داده شده استفاده کنید و
+    cleanup را فراموش نکنید.
+  </p>
+
+  <div class="code-container">
+    <div class="code-header">
+      <span>React Hook</span>
+      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+    </div>
+    <pre><code class="language-javascript">const { makeup, isReady } = useMakeup(token, productUid);
+
+useEffect(() => {
+    return () => makeup?.cleanup();
+}, [makeup]);</code></pre>
+  </div>
+</div>
+
+<div class="step">
+  <h3>❓ چطور خطاها را مدیریت کنم؟</h3>
+  <p><strong>پاسخ:</strong> از callback های onError استفاده کنید:</p>
+
+  <div class="code-container">
+    <div class="code-header">
+      <span>Error Handling</span>
+      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+    </div>
+    <pre><code class="language-javascript">window.initMakeup({
+    productUid: 'YOUR_UID',
+    onError: (error) => {
+        if (error.name === 'NotAllowedError') {
+            alert('لطفاً اجازه دسترسی به دوربین را بدهید');
+        } else if (error.name === 'NotFoundError') {
+            alert('دوربین یافت نشد');
+        } else {
+            console.error('خطا:', error);
+        }
+    }
+});</code></pre>
+  </div>
+</div>
+
+<div class="step">
+  <h3>❓ چطور محصول را تغییر دهم؟</h3>
+  <p><strong>پاسخ:</strong> از متد loadProduct استفاده کنید:</p>
+
+  <div class="code-container">
+    <div class="code-header">
+      <span>Change Product</span>
+      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+    </div>
+    <pre><code class="language-javascript">// بارگذاری محصول جدید
+const newProduct = await makeup.loadProduct('NEW_PRODUCT_UID');
+if (newProduct) {
+    console.log('محصول تغییر یافت:', newProduct.name);
+}</code></pre>
+  </div>
+</div>
+
+<h2>محدودیت‌ها و قیمت‌گذاری</h2>
+
+<div class="step">
+  <h3>❓ نسخه رایگان چه محدودیت‌هایی دارد؟</h3>
+  <p><strong>پاسخ:</strong></p>
+  <ul>
+    <li>لوگوی "Powered by ARmo" نمایش داده می‌شود</li>
+    <li>تعداد درخواست محدود است</li>
+    <li>برخی ویژگی‌های پیشرفته در دسترس نیست</li>
+  </ul>
+</div>
+
+<div class="step">
+  <h3>❓ چطور نسخه Premium بگیرم؟</h3>
+  <p>
+    <strong>پاسخ:</strong> از طریق سایت ARmo می‌توانید نسخه Premium خریداری کنید
+    که شامل:
+  </p>
+  <ul>
+    <li>حذف لوگو</li>
+    <li>درخواست‌های نامحدود</li>
+    <li>تمام ویژگی‌ها</li>
+    <li>پشتیبانی اولویت‌دار</li>
+  </ul>
+</div>
+
+<h2>مشکلات رایج</h2>
+
+<div class="step">
+  <h3>❓ SDK لود نمی‌شود</h3>
+  <p><strong>راه‌حل:</strong></p>
+
+  <div class="code-container">
+    <div class="code-header">
+      <span>Debug Loading</span>
+      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+    </div>
+    <pre><code class="language-javascript">// بررسی لود شدن SDK
+if (typeof window.Makeup === 'undefined') {
+    console.error('SDK لود نشده - script tag را چک کنید');
+} else {
+    console.log('SDK لود شده');
+    window.Makeup.setToken('YOUR_TOKEN');
+}</code></pre>
+  </div>
+</div>
+
+<div class="step">
+  <h3>❓ Token نامعتبر است</h3>
+  <p><strong>راه‌حل:</strong></p>
+  <ul>
+    <li>Token را از پنل ARmo مجدداً کپی کنید</li>
+    <li>فاصله اضافی در Token نباشد</li>
+    <li>تاریخ انقضا را بررسی کنید</li>
+    <li>Token را قبل از initMakeup set کنید</li>
+  </ul>
+</div>
+
+<div class="step">
+  <h3>❓ رنگ‌ها اعمال نمی‌شوند</h3>
+  <p><strong>راه‌حل:</strong></p>
+
+  <div class="code-container">
+    <div class="code-header">
+      <span>Check Status</span>
+      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+    </div>
+    <pre><code class="language-javascript">// بررسی آماده بودن SDK
+if (makeup.getStatus() === 'ready') {
+    makeup.changeMakeupColor('lips', '#FF0000');
+} else {
+    console.log('SDK هنوز آماده نیست');
+}</code></pre>
+  </div>
+</div>
+
+<h2>پشتیبانی</h2>
+
+<div class="info-box">
+  <h3>🆘 نیاز به کمک دارید؟</h3>
+  <ul>
+    <li><strong>مستندات:</strong> این راهنما را کاملاً مطالعه کنید</li>
+    <li><strong>Console:</strong> خطاهای مرورگر را بررسی کنید</li>
+    <li><strong>تست:</strong> روی localhost ابتدا تست کنید</li>
+    <li>
+      <strong>تماس:</strong> از طریق سایت armogroup.tech با پشتیبانی تماس بگیرید
+    </li>
+  </ul>
+</div>
+
+<div class="warning-box">
+  <h3>⚠️ نکات مهم:</h3>
+  <ul>
+    <li>هیچ‌وقت Token را در کد عمومی قرار ندهید</li>
+    <li>از متغیرهای محیطی استفاده کنید</li>
+    <li>SDK را فقط از CDN رسمی لود کنید</li>
+    <li>cleanup را فراموش نکنید</li>
+  </ul>
+</div>

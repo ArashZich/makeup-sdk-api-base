@@ -1,0 +1,77 @@
+<h1>SDK آرایش مجازی v3</h1>
+
+<p>
+  قدرتمندترین کتابخانه آرایش مجازی برای پروژه‌های وب با قابلیت اعمال آرایش در
+  زمان واقعی.
+</p>
+
+<h2>ویژگی‌های کلیدی</h2>
+<ul>
+  <li><strong>Real-time:</strong> آرایش در زمان واقعی روی دوربین</li>
+  <li><strong>پردازش تصویر:</strong> آپلود و آرایش روی عکس</li>
+  <li><strong>Pattern Support:</strong> انواع pattern های آرایش</li>
+  <li><strong>Responsive:</strong> سازگار با همه دستگاه‌ها</li>
+  <li><strong>React Ready:</strong> پشتیبانی کامل از React</li>
+</ul>
+
+<h2>پیش‌نیازها</h2>
+
+<div class="info-box">
+  <h3>موارد ضروری:</h3>
+  <ul>
+    <li><strong>Token:</strong> کلید احراز هویت از ARmo</li>
+    <li><strong>Product UID:</strong> شناسه محصول آرایشی</li>
+    <li><strong>HTTPS:</strong> برای دسترسی به دوربین</li>
+    <li><strong>مرورگر مدرن:</strong> Chrome 60+, Firefox 55+, Safari 11+</li>
+  </ul>
+</div>
+
+<h2>نمونه سریع</h2>
+
+<div class="code-container">
+  <div class="code-header">
+    <span>HTML</span>
+    <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+  </div>
+  <pre><code class="language-html">&lt;link rel="stylesheet" href="https://cdn.makeup.armogroup.tech/sdk/v3/makeup.min.css"&gt;
+&lt;script src="https://cdn.makeup.armogroup.tech/sdk/v3/makeup.min.js"&gt;&lt;/script&gt;
+&lt;div id="armo-makeup-view"&gt;&lt;/div&gt;</code></pre>
+</div>
+
+<div class="code-container">
+  <div class="code-header">
+    <span>JavaScript</span>
+    <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+  </div>
+  <pre><code class="language-javascript">// تنظیم Token
+window.Makeup.setToken('YOUR_TOKEN');
+
+// راه‌اندازی SDK
+const makeup = window.initMakeup({
+    productUid: 'YOUR_PRODUCT_UID',
+    mode: 'camera',
+    onReady: () => console.log('آماده!')
+});
+
+// تغییر رنگ
+makeup.changeMakeupColor('lips', '#FF69B4');</code></pre>
+</div>
+
+<h2>انواع آرایش پشتیبانی شده</h2>
+
+<ul>
+  <li><strong>lips:</strong> رژ لب</li>
+  <li><strong>eyeshadow:</strong> سایه چشم</li>
+  <li><strong>eyelashes:</strong> مژه</li>
+  <li><strong>blush:</strong> رژگونه</li>
+  <li><strong>foundation:</strong> کرم پودر</li>
+  <li><strong>brows:</strong> ابرو</li>
+  <li><strong>eyeliner:</strong> خط چشم</li>
+  <li><strong>concealer:</strong> کانسیلر</li>
+  <li><strong>lens:</strong> لنز رنگی</li>
+</ul>
+
+<div class="warning-box">
+  <strong>نکته مهم:</strong> برای دریافت Token و Product UID، باید در سایت
+  dashboard.makeup.armogroup.tech ثبت‌نام کنید و محصول خود را ایجاد کنید.
+</div>

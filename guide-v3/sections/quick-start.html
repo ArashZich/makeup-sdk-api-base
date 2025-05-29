@@ -1,0 +1,160 @@
+<h1>شروع سریع</h1>
+
+<p>در کمتر از 5 دقیقه SDK را راه‌اندازی کنید.</p>
+
+<h2>مرحله 1: اضافه کردن SDK</h2>
+
+<div class="step">
+  <h3>فایل‌های CSS و JS</h3>
+  <p>این کدها را به HTML خود اضافه کنید:</p>
+
+  <div class="code-container">
+    <div class="code-header">
+      <span>HTML</span>
+      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+    </div>
+    <pre><code class="language-html">&lt;!-- CSS --&gt;
+&lt;link rel="stylesheet" href="https://cdn.makeup.armogroup.tech/sdk/v3/makeup.min.css"&gt;
+
+&lt;!-- JavaScript --&gt;
+&lt;script src="https://cdn.makeup.armogroup.tech/sdk/v3/makeup.min.js"&gt;&lt;/script&gt;</code></pre>
+  </div>
+</div>
+
+<h2>مرحله 2: HTML ساختار</h2>
+
+<div class="step">
+  <h3>المنت مورد نیاز</h3>
+
+  <div class="code-container">
+    <div class="code-header">
+      <span>HTML</span>
+      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+    </div>
+    <pre><code class="language-html">&lt;div id="armo-makeup-view"&gt;&lt;/div&gt;</code></pre>
+  </div>
+</div>
+
+<h2>مرحله 3: راه‌اندازی</h2>
+
+<div class="step">
+  <h3>تنظیم Token و ProductUID</h3>
+
+  <div class="code-container">
+    <div class="code-header">
+      <span>JavaScript</span>
+      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+    </div>
+    <pre><code class="language-javascript">// تنظیم Token
+window.Makeup.setToken('YOUR_TOKEN_HERE');
+
+// راه‌اندازی SDK
+const makeup = window.initMakeup({
+    productUid: 'YOUR_PRODUCT_UID',
+    onReady: () => {
+        console.log('SDK آماده است!');
+    },
+    onError: (error) => {
+        console.error('خطا:', error);
+    }
+});</code></pre>
+  </div>
+</div>
+
+<h2>مرحله 4: استفاده از API</h2>
+
+<div class="step">
+  <h3>کنترل آرایش</h3>
+
+  <div class="code-container">
+    <div class="code-header">
+      <span>JavaScript</span>
+      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+    </div>
+    <pre><code class="language-javascript">// تغییر رنگ آرایش
+makeup.changeMakeupColor('lips', '#FF6B9D');
+
+// تغییر pattern آرایش
+makeup.changeMakeupPattern('lips', 'matte');
+
+// تغییر حالت به تصویر
+await makeup.switchMode('image');
+
+// بارگذاری محصول جدید
+await makeup.loadProduct('NEW_PRODUCT_UID');</code></pre>
+  </div>
+</div>
+
+<h2>مثال کامل</h2>
+
+<div class="code-container">
+  <div class="code-header">
+    <span>index.html</span>
+    <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+  </div>
+  <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="fa"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;آرایش مجازی&lt;/title&gt;
+    
+    &lt;link rel="stylesheet" href="https://cdn.makeup.armogroup.tech/sdk/v3/makeup.min.css"&gt;
+    &lt;style&gt;
+        body { margin: 0; padding: 20px; font-family: Arial; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .controls { padding: 20px; text-align: center; }
+        .btn { background: #007bff; color: white; border: none; 
+               padding: 10px 20px; margin: 5px; border-radius: 5px; cursor: pointer; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;h1&gt;آرایش مجازی&lt;/h1&gt;
+        
+        &lt;div id="armo-makeup-view"&gt;&lt;/div&gt;
+        
+        &lt;div class="controls"&gt;
+            &lt;button class="btn" onclick="changeColor('#FF6B9D')"&gt;صورتی&lt;/button&gt;
+            &lt;button class="btn" onclick="changeColor('#DC143C')"&gt;قرمز&lt;/button&gt;
+            &lt;button class="btn" onclick="changePattern('matte')"&gt;مات&lt;/button&gt;
+            &lt;button class="btn" onclick="changePattern('glossy')"&gt;براق&lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;script src="https://cdn.makeup.armogroup.tech/sdk/v3/makeup.min.js"&gt;&lt;/script&gt;
+    &lt;script&gt;
+        let makeupInstance;
+        
+        window.addEventListener('DOMContentLoaded', () =&gt; {
+            // تنظیم Token
+            window.Makeup.setToken('YOUR_TOKEN_HERE');
+            
+            // راه‌اندازی
+            makeupInstance = window.initMakeup({
+                productUid: 'YOUR_PRODUCT_UID',
+                onReady: () =&gt; console.log('آماده!'),
+                onError: (error) =&gt; alert('خطا: ' + error.message)
+            });
+        });
+        
+        function changeColor(color) {
+            makeupInstance?.changeMakeupColor('lips', color);
+        }
+        
+        function changePattern(pattern) {
+            makeupInstance?.changeMakeupPattern('lips', pattern);
+        }
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div>
+
+<div class="info-box">
+  <h3>نکات مهم:</h3>
+  <ul>
+    <li>Token و Product UID را از پنل ARmo دریافت کنید</li>
+    <li>حتماً روی HTTPS تست کنید</li>
+    <li>اجازه دسترسی به دوربین را بدهید</li>
+  </ul>
+</div>
