@@ -3,8 +3,10 @@
 import { setupFaceMesh, cleanup } from "../methods/faceMesh";
 import { ImageManager } from "../methods/imageManager";
 import { initImageUpload } from "../../ui";
-// این خط رو اضافه کنید
-import { changeMakeupColor as handleMakeupColorChange } from "../methods/makeupHandle";
+import {
+  changeMakeupColor as handleMakeupColorChange,
+  setMakeupPattern as handleMakeupPatternChange,
+} from "../methods/makeupHandle";
 
 /**
  * کلاس مدیریت حالت‌های SDK
@@ -23,8 +25,8 @@ export class ModeManager {
 
     this.featureManager = managers.featureManager;
     this.uiManager = managers.uiManager;
-    // اگر RenderManager یا ImageManager هم در managers پاس داده می‌شن، اونها رو هم اینجا نگه دارید
-    // مثال: this.renderManager = managers.renderManager;
+    this.productManager = managers.productManager; // اضافه کردن productManager
+
     if (managers.comparisonManager && elements.canvasElement) {
       this.imageManager = new ImageManager(
         elements.canvasElement,
@@ -41,7 +43,6 @@ export class ModeManager {
 
     this.cameraStream = null;
     this.faceMeshInstance = null;
-    // this.imageManager = null; // این خط رو بررسی کنید، شاید باید از managers بیاد یا اینجا new بشه
     this.onResultsCallback = null;
   }
 
@@ -66,25 +67,83 @@ export class ModeManager {
     }
 
     // ۱. به‌روزرسانی وضعیت رنگ در ماژول‌های آرایش (برای رندر دوربین)
-    // این تابع، متغیرهای گلوبال رنگ در هر ماژول آرایش (مثلا lipstickColor در lips.js) رو آپدیت می‌کنه
     handleMakeupColorChange(type, color);
 
     // ۲. اگر در حالت تصویر هستیم، تصویر رو با رنگ جدید آپدیت می‌کنیم
     if (this.options.mode === "image" && this.imageManager) {
-      // فرض می‌کنیم ImageManager متدهای لازم برای دریافت پترن و شفافیت فعلی خودش رو داره
-      // یا اینکه این مقادیر از یک جای مرکزی دیگه خونده میشن
       this.imageManager.updateMakeup(
         type,
         color,
-        this.imageManager.currentPattern, // یا مقدار پیش‌فرض/فعلی پترن
-        this.imageManager.currentTransparency // یا مقدار پیش‌فرض/فعلی شفافیت
+        this.imageManager.currentPattern,
+        this.imageManager.currentTransparency
       );
     }
-    // در حالت دوربین، حلقه رندر خودکار تغییرات رو اعمال می‌کنه
-    // چون از متغیرهای گلوبال آپدیت شده توسط handleMakeupColorChange استفاده می‌کنه
 
-    // برای اطمینان، می‌تونید یک event هم emit کنید اگر سایر بخش‌ها نیاز به اطلاع از تغییر رنگ دارن
-    // document.dispatchEvent(new CustomEvent('makeupColorChanged', { detail: { type, color, code } }));
+    // ۳. ذخیره رنگ فعلی در options برای استفاده بعدی
+    this.options.currentMakeupType = type;
+    this.options.currentColor = color;
+
+    return true;
+  }
+
+  /**
+   * تغییر pattern آرایش بر اساس حالت فعلی
+   * @param {string} type - نوع آرایش
+   * @param {string} pattern - کد pattern (lowercase)
+   */
+  changeMakeupPattern(type, pattern) {
+    if (!type || !pattern) {
+      console.warn("نوع یا pattern آرایش برای تغییر مشخص نشده است.");
+      return false;
+    }
+
+    // ۱. به‌روزرسانی pattern در ماژول‌های آرایش
+    handleMakeupPatternChange(type, pattern);
+
+    // ۲. اگر در حالت تصویر هستیم، تصویر رو با pattern جدید آپدیت می‌کنیم
+    if (this.options.mode === "image" && this.imageManager) {
+      this.imageManager.updateMakeup(
+        type,
+        this.options.currentColor || this.imageManager.currentMakeupColor,
+        pattern,
+        this.imageManager.currentTransparency
+      );
+    }
+
+    // ۳. ذخیره pattern فعلی در options
+    this.options.currentPattern = pattern;
+
+    return true;
+  }
+
+  /**
+   * اعمال رنگ و pattern پیش‌فرض محصول
+   * @param {string} makeupType - نوع آرایش
+   */
+  applyProductDefaults(makeupType) {
+    if (!this.productManager || !this.productManager.hasValidProduct()) {
+      return false;
+    }
+
+    const productType = this.productManager.getProductType();
+
+    // بررسی اینکه نوع آرایش با نوع محصول مطابقت دارد
+    if (productType !== makeupType) {
+      return false;
+    }
+
+    // اعمال رنگ پیش‌فرض
+    const defaultColor = this.productManager.getCurrentColorHex();
+    if (defaultColor) {
+      this.changeMakeupColor(makeupType, defaultColor);
+    }
+
+    // اعمال pattern پیش‌فرض
+    const defaultPattern = this.productManager.getCurrentPattern();
+    if (defaultPattern) {
+      this.changeMakeupPattern(makeupType, defaultPattern);
+    }
+
     return true;
   }
 
@@ -98,11 +157,9 @@ export class ModeManager {
 
     // cleanup حالت قبلی
     if (this.options.mode === "camera") {
-      // در حالت تصویر، دوربین را کاملاً متوقف نمی‌کنیم بلکه فقط مخفی می‌کنیم
       if (newMode === "image") {
         this._hideCamera();
       } else {
-        // اگر به حالت دیگری غیر از image می‌رویم، عملیات cleanup کامل را انجام می‌دهیم
         this._cleanupCamera();
       }
     } else if (this.options.mode === "image") {
@@ -110,11 +167,10 @@ export class ModeManager {
         this.imageManager.destroy();
       }
 
-      // اگر در حالت image بودیم و مدال بسته شد، به حالت دوربین برگردیم
       if (newMode === "camera") {
         this.options.mode = newMode;
         await this.initCamera();
-        return; // بعد از فراخوانی initCamera نیازی به اجرای کد بعدی نیست
+        return;
       }
     }
 
@@ -137,7 +193,6 @@ export class ModeManager {
     }
 
     if (this.canvasElement) {
-      // پاک کردن canvas برای نمایش صفحه سیاه
       const ctx = this.canvasElement.getContext("2d");
       ctx.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
       ctx.fillStyle = "#000000";
@@ -175,15 +230,15 @@ export class ModeManager {
     try {
       // نمایش المنت ویدیو
       if (this.videoElement) {
-        this.videoElement.style = ""; // پاک کردن همه استایل‌ها
-        this.videoElement.style.transform = "scaleX(-1)"; // فقط حفظ mirror
+        this.videoElement.style = "";
+        this.videoElement.style.transform = "scaleX(-1)";
         this.videoElement.style.display = "block";
       }
 
       // تنظیم مجدد استایل‌های canvas
       if (this.canvasElement) {
-        this.canvasElement.style = ""; // پاک کردن همه استایل‌ها
-        this.canvasElement.style.transform = "scaleX(-1)"; // فقط حفظ mirror
+        this.canvasElement.style = "";
+        this.canvasElement.style.transform = "scaleX(-1)";
         this.canvasElement.style.display = "block";
       }
 
@@ -242,7 +297,6 @@ export class ModeManager {
 
       // ایجاد یا بازیابی imageManager
       if (!this.imageManager) {
-        // پاس دادن comparisonManager اگر وجود دارد
         const comparisonManager = this.options.comparisonManager || null;
         this.imageManager = new ImageManager(
           this.canvasElement,
@@ -259,16 +313,15 @@ export class ModeManager {
           const success = await this.imageManager.loadImage(imageData);
 
           if (success) {
-            // در صورت موفقیت، اعمال تنظیمات فعلی آرایش روی عکس
+            // اعمال تنظیمات فعلی آرایش روی عکس
             if (this.options.currentMakeupType && this.options.currentColor) {
-              // اطمینان از وجود هر دو
               this.imageManager.updateMakeup(
                 this.options.currentMakeupType,
                 this.options.currentColor,
-                this.options.currentPattern || this.imageManager.currentPattern, // استفاده از پترن imageManager اگر آپشن موجود نیست
+                this.options.currentPattern || this.imageManager.currentPattern,
                 this.options.transparency === undefined
                   ? this.imageManager.currentTransparency
-                  : this.options.transparency // استفاده از شفافیت imageManager اگر آپشن موجود نیست
+                  : this.options.transparency
               );
             }
           } else {
@@ -289,7 +342,6 @@ export class ModeManager {
 
       // اضافه کردن callback برای زمانی که کاربر مدال را می‌بندد
       uploadManager.show(() => {
-        // برگرداندن به حالت دوربین
         this.switchMode("camera");
       });
 

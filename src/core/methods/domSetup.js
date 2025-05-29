@@ -70,6 +70,13 @@ export function createDOMElements(options, isPremium) {
 
   innerContainer.appendChild(controls);
 
+  // اضافه کردن pattern picker element به container
+  const patternPicker = document.createElement("div");
+  patternPicker.id = "armo-sdk-pattern-picker";
+  patternPicker.className = "armo-sdk-pattern-picker";
+  patternPicker.style.display = "none"; // مخفی به صورت پیش‌فرض
+  innerContainer.appendChild(patternPicker);
+
   // اضافه کردن Powered by برای نسخه غیر پریمیوم
   if (!isPremium) {
     const infoContainer = document.createElement("div");

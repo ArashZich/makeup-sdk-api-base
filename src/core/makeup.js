@@ -1,4 +1,4 @@
-// Updated version of src/core/makeup.js
+// src/core/makeup.js
 
 import "core-js/stable";
 import "regenerator-runtime/runtime";
@@ -21,7 +21,7 @@ import { ModeManager } from "./modules/mode-manager";
 import { ProductLoader } from "./modules/product-loader";
 
 // UI components
-import { initColorPicker, initCameraControls } from "../ui";
+import { initColorPicker, initCameraControls, initPatternPicker } from "../ui";
 
 // Styles
 import "../ui/styles/index.css";
@@ -106,13 +106,11 @@ class Makeup {
       let validationResult;
 
       if (this.options.productUid) {
-        // Use the updated method structure for product info
         validationResult = await this.apiHandler.loadProductAndTokenInfo(
           this.options.productUid
         );
       } else {
-        // Use the validateToken method
-        validationResult = await this.apiHandler.validateToken();
+        validationResult = await this.apiHandler.loadProductAndTokenInfo();
       }
 
       // Check validation result
@@ -151,10 +149,16 @@ class Makeup {
         () => this.uiManager.hideLightWarning()
       );
 
+      // اضافه کردن productManager به ModeManager
       this.modeManager = new ModeManager(
         this.options,
         { videoElement: this.videoElement, canvasElement: this.canvasElement },
-        { featureManager: this.featureManager, uiManager: this.uiManager }
+        {
+          featureManager: this.featureManager,
+          uiManager: this.uiManager,
+          productManager: this.productManager,
+          comparisonManager: this.comparisonManager,
+        }
       );
 
       this.productLoader = new ProductLoader({
@@ -172,6 +176,9 @@ class Makeup {
 
       // Initialize UI
       this._initializeUI();
+
+      // اعمال مقادیر پیش‌فرض محصول
+      this._applyProductDefaults();
 
       // Initialize appropriate mode
       await this._initializeMode();
@@ -224,6 +231,17 @@ class Makeup {
   }
 
   /**
+   * اعمال مقادیر پیش‌فرض محصول
+   * @private
+   */
+  _applyProductDefaults() {
+    if (this.currentMakeupType && this.modeManager) {
+      // اعمال رنگ و pattern پیش‌فرض
+      this.modeManager.applyProductDefaults(this.currentMakeupType);
+    }
+  }
+
+  /**
    * Initialize appropriate mode
    * @private
    */
@@ -241,6 +259,9 @@ class Makeup {
    * @private
    */
   _initializeUI() {
+    // اضافه کردن DOM elements برای pattern picker
+    this._createPatternPickerElement();
+
     // Initialize color picker
     if (this.options.showColorPicker) {
       let colors = [];
@@ -266,8 +287,52 @@ class Makeup {
       }
     }
 
+    // Initialize pattern picker
+    this._initializePatternPicker();
+
     // Initialize camera controls
     initCameraControls(this.mediaFeatures);
+  }
+
+  /**
+   * ایجاد element برای pattern picker
+   * @private
+   */
+  _createPatternPickerElement() {
+    const container = document.querySelector(".armo-sdk-container");
+    if (!container) return;
+
+    // بررسی اینکه آیا element قبلاً وجود دارد
+    let patternPicker = document.getElementById("armo-sdk-pattern-picker");
+
+    if (!patternPicker) {
+      patternPicker = document.createElement("div");
+      patternPicker.id = "armo-sdk-pattern-picker";
+      patternPicker.className = "armo-sdk-pattern-picker";
+      container.appendChild(patternPicker);
+    }
+  }
+
+  /**
+   * Initialize pattern picker
+   * @private
+   */
+  _initializePatternPicker() {
+    if (!this.productManager || !this.productManager.hasValidProduct()) {
+      return;
+    }
+
+    const patterns = this.productManager.getPatterns();
+    const currentPattern = this.productManager.getCurrentPattern();
+
+    if (patterns.length > 1) {
+      initPatternPicker(
+        (pattern) => this.changeMakeupPattern(this.currentMakeupType, pattern),
+        patterns,
+        "armo-sdk-pattern-picker",
+        currentPattern
+      );
+    }
   }
 
   /**
@@ -332,11 +397,18 @@ class Makeup {
    * @returns {boolean} Success status
    */
   changeMakeupColor(type, color, code = null) {
-    return this.modeManager.changeMakeupColor(
+    const result = this.modeManager.changeMakeupColor(
       type || this.currentMakeupType,
       color,
       code
     );
+
+    // بروزرسانی ProductManager اگر رنگ از محصول فعلی باشد
+    if (result && this.productManager) {
+      this.productManager.setCurrentColor(color);
+    }
+
+    return result;
   }
 
   /**
@@ -346,10 +418,27 @@ class Makeup {
    * @returns {boolean} Success status
    */
   setMakeupPattern(type, pattern) {
-    return this.modeManager.setMakeupPattern(
+    const result = this.modeManager.changeMakeupPattern(
       type || this.currentMakeupType,
       pattern
     );
+
+    // بروزرسانی ProductManager
+    if (result && this.productManager) {
+      this.productManager.setCurrentPattern(pattern);
+    }
+
+    return result;
+  }
+
+  /**
+   * تغییر pattern آرایش (alias برای setMakeupPattern)
+   * @param {string} type - Makeup type
+   * @param {string} pattern - Pattern
+   * @returns {boolean} Success status
+   */
+  changeMakeupPattern(type, pattern) {
+    return this.setMakeupPattern(type, pattern);
   }
 
   /**
@@ -359,10 +448,10 @@ class Makeup {
    * @returns {boolean} Success status
    */
   setMakeupTransparency(type, transparency) {
-    return this.modeManager.setMakeupTransparency(
-      type || this.currentMakeupType,
-      transparency
-    );
+    // این متد باید در ModeManager پیاده‌سازی بشه
+    // فعلاً placeholder
+    this.options.transparency = transparency;
+    return true;
   }
 
   /**
@@ -371,7 +460,16 @@ class Makeup {
    * @returns {Promise<Object|null>} Product info or null if error
    */
   async loadProduct(productUid) {
-    return await this.productLoader.loadProduct(productUid);
+    const productInfo = await this.productLoader.loadProduct(productUid);
+
+    if (productInfo) {
+      // بروزرسانی UI بعد از لود محصول جدید
+      this._setupMakeupType(productInfo);
+      this._initializeUI();
+      this._applyProductDefaults();
+    }
+
+    return productInfo;
   }
 
   /**
@@ -400,6 +498,8 @@ class Makeup {
       version: Makeup.version,
       status: this.status,
       currentMakeupType: this.currentMakeupType,
+      currentColor: this.productManager?.getCurrentColorHex(),
+      currentPattern: this.productManager?.getCurrentPattern(),
       isPremium: this.isPremium,
       enabledFeatures: this.featureManager?.getEnabledFeatures() || [],
       resolution: this.videoElement

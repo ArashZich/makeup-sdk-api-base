@@ -12,6 +12,11 @@ export class ProductManager {
     this.productInfo = productInfo;
     this.currentColor = null;
     this.currentPattern = null;
+
+    // اگر productInfo از همان ابتدا پاس داده شده، تنظیمات اولیه انجام بده
+    if (productInfo) {
+      this._setDefaults();
+    }
   }
 
   /**
@@ -20,17 +25,24 @@ export class ProductManager {
    */
   setProductInfo(productInfo) {
     this.productInfo = productInfo;
-
-    // تنظیم خودکار اولین رنگ و پترن به عنوان مقادیر پیش‌فرض
-    if (productInfo?.colors?.length > 0) {
-      this.currentColor = productInfo.colors[0];
-    }
-
-    if (productInfo?.patterns?.length > 0) {
-      this.currentPattern = productInfo.patterns[0].code;
-    }
-
+    this._setDefaults();
     return this;
+  }
+
+  /**
+   * تنظیم مقادیر پیش‌فرض بر اساس اطلاعات محصول
+   * @private
+   */
+  _setDefaults() {
+    // تنظیم خودکار اولین رنگ به عنوان مقدار پیش‌فرض
+    if (this.productInfo?.colors?.length > 0) {
+      this.currentColor = this.productInfo.colors[0];
+    }
+
+    // تنظیم خودکار اولین پترن به عنوان مقدار پیش‌فرض (lowercase)
+    if (this.productInfo?.patterns?.length > 0) {
+      this.currentPattern = this.productInfo.patterns[0].code.toLowerCase();
+    }
   }
 
   /**
@@ -59,7 +71,7 @@ export class ProductManager {
 
   /**
    * تنظیم رنگ فعلی
-   * @param {string} colorCode - کد رنگ یا کد محصول رنگ
+   * @param {string} colorCode - کد رنگ یا هکس کد
    * @returns {Object|null} آبجکت رنگ انتخاب شده یا null اگر رنگ یافت نشد
    */
   setCurrentColor(colorCode) {
@@ -67,7 +79,7 @@ export class ProductManager {
 
     // جستجو بر اساس کد یا هکس کد
     const color = this.productInfo.colors.find(
-      (c) => c.name === colorCode || c.hexCode === colorCode
+      (c) => c.code === colorCode || c.color === colorCode
     );
 
     if (color) {
@@ -91,23 +103,26 @@ export class ProductManager {
    * @returns {string|null} کد هگزادسیمال رنگ فعلی یا null
    */
   getCurrentColorHex() {
-    return this.currentColor?.hexCode || null;
+    return this.currentColor?.color || null;
   }
 
   /**
    * تنظیم پترن فعلی
-   * @param {string} patternCode - کد پترن
+   * @param {string} patternCode - کد پترن (خودکار lowercase می‌شود)
    * @returns {Object|null} آبجکت پترن انتخاب شده یا null اگر پترن یافت نشد
    */
   setCurrentPattern(patternCode) {
     if (!this.productInfo?.patterns) return null;
 
+    // تبدیل به lowercase برای جستجو
+    const lowerPatternCode = patternCode.toLowerCase();
+
     const pattern = this.productInfo.patterns.find(
-      (p) => p.code === patternCode
+      (p) => p.code.toLowerCase() === lowerPatternCode
     );
 
     if (pattern) {
-      this.currentPattern = pattern.code;
+      this.currentPattern = pattern.code.toLowerCase();
       return pattern;
     }
 
@@ -116,10 +131,22 @@ export class ProductManager {
 
   /**
    * دریافت پترن فعلی
-   * @returns {string|null} کد پترن فعلی یا null
+   * @returns {string|null} کد پترن فعلی (lowercase) یا null
    */
   getCurrentPattern() {
     return this.currentPattern;
+  }
+
+  /**
+   * دریافت اطلاعات کامل پترن فعلی
+   * @returns {Object|null} آبجکت پترن فعلی یا null
+   */
+  getCurrentPatternInfo() {
+    if (!this.currentPattern || !this.productInfo?.patterns) return null;
+
+    return this.productInfo.patterns.find(
+      (p) => p.code.toLowerCase() === this.currentPattern
+    );
   }
 
   /**
@@ -127,12 +154,16 @@ export class ProductManager {
    * @returns {string|null} آدرس تصویر پترن فعلی یا null
    */
   getCurrentPatternImage() {
-    if (!this.currentPattern || !this.productInfo?.patterns) return null;
+    const patternInfo = this.getCurrentPatternInfo();
+    return patternInfo?.imageUrl || null;
+  }
 
-    const pattern = this.productInfo.patterns.find(
-      (p) => p.code === this.currentPattern
-    );
-    return pattern?.imageUrl || null;
+  /**
+   * بررسی اینکه آیا محصول دارای پترن‌های متعدد است
+   * @returns {boolean} true اگر بیش از یک پترن وجود دارد
+   */
+  hasMultiplePatterns() {
+    return this.productInfo?.patterns?.length > 1;
   }
 
   /**
@@ -163,11 +194,15 @@ export class ProductManager {
       color: this.getCurrentColorHex(),
       pattern: this.getCurrentPattern(),
       colors: this.getColors().map((color) => ({
-        code: color.name,
-        color: color.hexCode,
+        code: color.code,
+        color: color.color,
         url: color.imageUrl,
       })),
-      patterns: this.getPatterns().map((pattern) => pattern.code),
+      patterns: this.getPatterns().map((pattern) => ({
+        name: pattern.name,
+        code: pattern.code.toLowerCase(),
+        imageUrl: pattern.imageUrl,
+      })),
     };
   }
 }

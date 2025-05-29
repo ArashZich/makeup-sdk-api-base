@@ -12,6 +12,7 @@
 @import "./_cameraControls.css";
 @import "./_comparison.css";
 @import "./_imageUpload.css";
+@import "./_patternPicker.css";
 
 /* Override styles and global animations */
 :root {

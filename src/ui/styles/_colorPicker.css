@@ -1,4 +1,4 @@
-/*! _colorPicker.css */
+/* src/ui/styles/_colorPicker.css */
 
 /* Container styles */
 .armo-sdk-color-picker {
@@ -12,10 +12,10 @@
   width: 100%;
   max-width: min(560px, calc(100% - 48px));
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: visible; /* تغییر از hidden به visible */
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
-  padding: 0 24px 8px 24px;
+  padding: 16px 24px 24px 24px; /* اضافه کردن padding بالا برای جا دادن hover effect */
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
@@ -68,61 +68,73 @@
   min-width: 4px;
 }
 
-/* Button styles */
+/* Button styles - بهبود شده */
 .armo-sdk-color {
   width: 64px;
   height: 64px;
   min-width: 64px;
   min-height: 64px;
   border-radius: 48px;
-  padding: 8px;
+  padding: 4px; /* کاهش padding */
   cursor: pointer;
   border: 2px solid transparent;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: "PublicSans", sans-serif;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 22px;
+  font-family: "IRANSans", "PublicSans", sans-serif;
+  font-weight: 500; /* کاهش از 600 به 500 */
+  font-size: 11px; /* کاهش از 14px */
+  line-height: 14px; /* کاهش از 22px */
   letter-spacing: 0;
   text-align: center;
   color: #000000;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   flex-shrink: 0;
   aspect-ratio: 1;
   background-color: #ffffff;
+  position: relative; /* برای کنترل بهتر z-index */
+  overflow: hidden; /* جلوگیری از بیرون زدن متن */
 }
 
-/* Color code */
+/* Color code - بهبود شده */
 .armo-sdk-color-code {
-  font-family: "PublicSans", sans-serif;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 22px;
+  font-family: "IRANSans", "PublicSans", sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 13px;
   color: inherit;
-  display: inline-block; /* این به کنترل بهتر عرض و تراز بندی متنِ چند خطی کمک می‌کنه */
-  max-width: 100%; /* تضمین می‌کنه که عرض این اِلمان از عرض داخلی دکمه بیشتر نشه */
-  word-wrap: break-word; /* برای مرورگرهای قدیمی‌تر جهت شکستن کلمات طولانی */
-  overflow-wrap: break-word; /* خاصیت استاندارد برای شکستن کلمات طولانی و جلوگیری از سرریز */
-  white-space: normal; /* اجازه می‌ده متن به طور عادی (در فاصله‌ها و با توجه به break-word) به خط بعدی بره */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  width: 100%;
+  max-width: 54px; /* محدود کردن عرض */
+  max-height: 54px; /* محدود کردن ارتفاع */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  hyphens: auto; /* اضافه کردن خط فاصله خودکار */
+  padding: 2px; /* کمی padding داخلی */
+  box-sizing: border-box;
 }
 
-/* Hover effects */
+/* Hover effects - بهبود شده */
 .armo-sdk-color:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: scale(1.08); /* کاهش از 1.1 */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  z-index: 15; /* بالا آوردن hover شده */
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .armo-sdk-color:active {
-  transform: scale(0.98);
+  transform: scale(0.96); /* کاهش از 0.98 */
 }
 
 /* Selected state */
 .armo-sdk-color.active {
-  border: 4px solid #ffffff;
+  border: 3px solid #ffffff; /* کاهش از 4px */
   color: #ffffff;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
 }
 
 /* Image styles */
@@ -130,7 +142,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 48px;
+  border-radius: 44px; /* تنظیم مجدد */
 }
 
 /* Desktop and large tablets (6-7 colors) */
@@ -138,16 +150,23 @@
   .armo-sdk-color-picker {
     width: 100%;
     max-width: min(560px, calc(100% - 48px));
+    padding: 20px 24px 24px 24px;
   }
 
   .armo-sdk-color-picker > div {
     gap: 16px;
   }
 
-  .armo-sdk-color,
+  .armo-sdk-color {
+    font-size: 12px;
+    line-height: 15px;
+  }
+
   .armo-sdk-color-code {
-    font-size: 14px;
-    line-height: 22px;
+    font-size: 12px;
+    line-height: 15px;
+    max-width: 56px;
+    max-height: 56px;
   }
 }
 
@@ -156,7 +175,7 @@
   .armo-sdk-color-picker {
     width: 100%;
     max-width: min(420px, calc(100% - 40px));
-    padding: 0 20px 12px 20px;
+    padding: 16px 20px 20px 20px;
     bottom: 28px;
   }
 
@@ -170,11 +189,19 @@
     min-width: 52px;
     min-height: 52px;
     border-radius: 40px;
+    font-size: 10px;
+    line-height: 12px;
   }
 
   .armo-sdk-color-code {
-    font-size: 13px;
-    line-height: 20px;
+    font-size: 10px;
+    line-height: 12px;
+    max-width: 44px;
+    max-height: 44px;
+  }
+
+  .armo-sdk-color img {
+    border-radius: 36px;
   }
 }
 
@@ -183,7 +210,7 @@
   .armo-sdk-color-picker {
     width: 100%;
     max-width: min(420px, calc(100% - 140px));
-    padding: 0 20px 12px 20px;
+    padding: 16px 20px 20px 20px;
     bottom: 28px;
   }
 
@@ -201,8 +228,10 @@
   }
 
   .armo-sdk-color-code {
-    font-size: 13px;
-    line-height: 20px;
+    font-size: 10px;
+    line-height: 12px;
+    max-width: 44px;
+    max-height: 44px;
   }
 }
 
@@ -211,7 +240,7 @@
   .armo-sdk-color-picker {
     width: 100%;
     max-width: min(320px, calc(100% - 32px));
-    padding: 0 16px 16px 16px;
+    padding: 12px 16px 20px 16px;
     bottom: 32px;
   }
 
@@ -225,11 +254,19 @@
     min-width: 48px;
     min-height: 48px;
     border-radius: 36px;
+    font-size: 9px;
+    line-height: 11px;
   }
 
   .armo-sdk-color-code {
-    font-size: 12px;
-    line-height: 18px;
+    font-size: 9px;
+    line-height: 11px;
+    max-width: 40px;
+    max-height: 40px;
+  }
+
+  .armo-sdk-color img {
+    border-radius: 32px;
   }
 }
 
@@ -238,7 +275,7 @@
   .armo-sdk-color-picker {
     width: 100%;
     max-width: calc(100% - 24px);
-    padding: 0 12px 20px 12px;
+    padding: 12px 12px 24px 12px;
     bottom: 36px;
   }
 
@@ -252,12 +289,20 @@
     min-width: 40px;
     min-height: 40px;
     border-radius: 30px;
-    padding: 6px;
+    padding: 3px;
+    font-size: 8px;
+    line-height: 10px;
   }
 
   .armo-sdk-color-code {
-    font-size: 10px;
-    line-height: 14px;
+    font-size: 8px;
+    line-height: 9px;
+    max-width: 34px;
+    max-height: 34px;
+  }
+
+  .armo-sdk-color img {
+    border-radius: 24px;
   }
 }
 
@@ -266,7 +311,7 @@
   .armo-sdk-color-picker {
     width: 100%;
     max-width: calc(100% - 16px);
-    padding: 0 8px 24px 8px;
+    padding: 12px 8px 28px 8px;
     bottom: 40px;
   }
 
@@ -280,11 +325,19 @@
     min-width: 36px;
     min-height: 36px;
     border-radius: 24px;
-    padding: 6px;
+    padding: 2px;
+    font-size: 7px;
+    line-height: 9px;
   }
 
   .armo-sdk-color-code {
-    font-size: 9px;
-    line-height: 12px;
+    font-size: 7px;
+    line-height: 8px;
+    max-width: 30px;
+    max-height: 30px;
+  }
+
+  .armo-sdk-color img {
+    border-radius: 20px;
   }
 }

@@ -1,0 +1,110 @@
+/* src/ui/styles/_patternPicker.css */
+
+.armo-sdk-pattern-picker {
+  position: absolute;
+  bottom: 150px; /* بالاتر از color picker */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 11;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: min(400px, calc(100% - 48px));
+  padding: 0 24px;
+}
+
+.armo-sdk-pattern-wrapper {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  /* حذف background و border - فقط دکمه های شناور */
+}
+
+.armo-sdk-pattern-button {
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  font-family: "IRANSans", "PublicSans", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  /* حذف min-width و flex-direction */
+}
+
+.armo-sdk-pattern-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.armo-sdk-pattern-button.active {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.armo-sdk-pattern-text {
+  display: block;
+  text-align: center;
+  /* حذف تمام استایل های قبلی - فقط متن ساده */
+}
+
+/* موبایل */
+@media (max-width: 768px) {
+  .armo-sdk-pattern-picker {
+    bottom: 160px; /* بالاتر در موبایل */
+    max-width: calc(100% - 32px);
+    padding: 0 16px;
+  }
+
+  .armo-sdk-pattern-wrapper {
+    gap: 10px;
+  }
+
+  .armo-sdk-pattern-button {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 16px;
+  }
+}
+
+/* تلفن‌های کوچک */
+@media (max-width: 480px) {
+  .armo-sdk-pattern-picker {
+    bottom: 180px;
+    max-width: calc(100% - 24px);
+    padding: 0 12px;
+  }
+
+  .armo-sdk-pattern-wrapper {
+    gap: 8px;
+    flex-wrap: wrap; /* اجازه شکستن خط در صفحه های کوچک */
+  }
+
+  .armo-sdk-pattern-button {
+    padding: 5px 10px;
+    font-size: 11px;
+    border-radius: 14px;
+  }
+}
+
+/* خیلی کوچک */
+@media (max-width: 360px) {
+  .armo-sdk-pattern-picker {
+    bottom: 200px;
+  }
+
+  .armo-sdk-pattern-button {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+}
