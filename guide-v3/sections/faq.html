@@ -1,227 +1,302 @@
-<h1>سوالات متداول</h1>
+<section class="faq">
+  <h2>سوالات متداول</h2>
 
-<p>پاسخ به رایج‌ترین سوالات درباره SDK آرایش مجازی v3</p>
+  <!-- سوالات عمومی -->
+  <div class="faq-section">
+    <h3>سوالات عمومی</h3>
 
-<h2>نصب و راه‌اندازی</h2>
-
-<div class="step">
-  <h3>❓ چطور Token و Product UID دریافت کنم؟</h3>
-  <p>
-    <strong>پاسخ:</strong> باید در سایت ARmo ثبت‌نام کنید، محصول بسازید و از پنل
-    مدیریت Token و Product UID را کپی کنید.
-  </p>
-</div>
-
-<div class="step">
-  <h3>❓ SDK روی HTTP کار می‌کند؟</h3>
-  <p>
-    <strong>پاسخ:</strong> خیر، به دلیل امنیت دوربین، فقط روی HTTPS کار می‌کند.
-    localhost مستثنی است.
-  </p>
-</div>
-
-<div class="step">
-  <h3>❓ چه مرورگرهایی پشتیبانی می‌شوند؟</h3>
-  <p>
-    <strong>پاسخ:</strong> Chrome 60+، Firefox 55+، Safari 11+، Edge 79+.
-    Internet Explorer پشتیبانی نمی‌شود.
-  </p>
-</div>
-
-<h2>عملکرد و مشکلات</h2>
-
-<div class="step">
-  <h3>❓ دوربین کار نمی‌کند، چه کنم؟</h3>
-  <p><strong>پاسخ:</strong></p>
-  <ul>
-    <li>مطمئن شوید روی HTTPS هستید</li>
-    <li>اجازه دسترسی به دوربین را بدهید</li>
-    <li>دوربین توسط برنامه دیگری استفاده نشود</li>
-    <li>Console مرورگر را برای خطاها چک کنید</li>
-  </ul>
-</div>
-
-<div class="step">
-  <h3>❓ SDK کند کار می‌کند، چرا؟</h3>
-  <p><strong>پاسخ:</strong></p>
-  <ul>
-    <li>اتصال اینترنت را بررسی کنید</li>
-    <li>از مرورگر به‌روز استفاده کنید</li>
-    <li>Tab های اضافی را ببندید</li>
-    <li>سخت‌افزار ضعیف ممکن است تأثیر بگذارد</li>
-  </ul>
-</div>
-
-<div class="step">
-  <h3>❓ چهره تشخیص داده نمی‌شود؟</h3>
-  <p><strong>پاسخ:</strong></p>
-  <ul>
-    <li>نور کافی داشته باشید</li>
-    <li>مستقیم به دوربین نگاه کنید</li>
-    <li>فاصله مناسب با دوربین داشته باشید</li>
-    <li>موهایتان صورت را نپوشاند</li>
-  </ul>
-</div>
-
-<h2>توسعه و کدنویسی</h2>
-
-<div class="step">
-  <h3>❓ چطور در React استفاده کنم؟</h3>
-  <p>
-    <strong>پاسخ:</strong> از Hook که در بخش React توضیح داده شده استفاده کنید و
-    cleanup را فراموش نکنید.
-  </p>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>React Hook</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+    <div class="faq-item">
+      <h4>آیا می‌توانم SDK را به صورت آفلاین استفاده کنم؟</h4>
+      <div class="answer">
+        <p>خیر، SDK نیاز به اتصال اینترنت دارد زیرا باید:</p>
+        <ul>
+          <li>توکن به صورت آنلاین اعتبارسنجی شود</li>
+          <li>اطلاعات محصول از سرور بارگیری شود</li>
+          <li>منابع مورد نیاز از CDN بارگیری شوند</li>
+        </ul>
+      </div>
     </div>
-    <pre><code class="language-javascript">const { makeup, isReady } = useMakeup(token, productUid);
 
+    <div class="faq-item">
+      <h4>چه مرورگرهایی پشتیبانی می‌شوند؟</h4>
+      <div class="answer">
+        <p>مرورگرهای مدرن با نسخه‌های زیر پشتیبانی می‌شوند:</p>
+        <ul>
+          <li>Chrome نسخه 88 و بالاتر</li>
+          <li>Firefox نسخه 85 و بالاتر</li>
+          <li>Safari نسخه 14 و بالاتر</li>
+          <li>Edge نسخه 88 و بالاتر</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>تفاوت نسخه 3 با نسخه‌های قبلی چیست؟</h4>
+      <div class="answer">
+        <p>تغییرات مهم در نسخه 3:</p>
+        <ul>
+          <li>ساده‌سازی API و حذف پیچیدگی‌های غیرضروری</li>
+          <li>معرفی مفهوم Product UID برای مدیریت محصولات</li>
+          <li>حذف نیاز به تعریف دستی رنگ‌ها و pattern ها</li>
+          <li>بهبود عملکرد و سرعت</li>
+          <li>پشتیبانی بهتر از حالت تصویر</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- سوالات فنی -->
+  <div class="faq-section">
+    <h3>سوالات فنی</h3>
+
+    <div class="faq-item">
+      <h4>چرا دوربین کار نمی‌کند؟</h4>
+      <div class="answer">
+        <p>موارد زیر را بررسی کنید:</p>
+        <ul>
+          <li>مجوز دسترسی به دوربین در مرورگر</li>
+          <li>اتصال HTTPS در محیط وب</li>
+          <li>عدم استفاده همزمان دوربین توسط برنامه‌های دیگر</li>
+        </ul>
+        <div class="code-example">
+          <pre><code>// بررسی دسترسی به دوربین
+if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    console.error("دوربین در این مرورگر پشتیبانی نمی‌شود");
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>چگونه می‌توانم کیفیت تشخیص چهره را بهبود دهم؟</h4>
+      <div class="answer">
+        <ol>
+          <li>از نور کافی و مناسب استفاده کنید</li>
+          <li>مستقیم به دوربین نگاه کنید</li>
+          <li>فاصله مناسب (30-60 سانتیمتر) را حفظ کنید</li>
+          <li>از پس‌زمینه ساده استفاده کنید</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>چگونه وضعیت SDK را مانیتور کنم؟</h4>
+      <div class="answer">
+        <div class="code-example">
+          <pre><code>// روش 1: استفاده از getStatus
+const status = makeup.getStatus();
+console.log("وضعیت SDK:", status);
+
+// روش 2: استفاده از callbacks
+const makeup = window.initMakeup({
+    productUid: "YOUR_PRODUCT_UID",
+    onReady: () => console.log("SDK آماده است"),
+    onError: (error) => console.error("خطا:", error)
+});</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>چگونه بین حالت دوربین و تصویر جابجا شوم؟</h4>
+      <div class="answer">
+        <div class="code-example">
+          <pre><code>// تغییر به حالت تصویر
+await makeup.switchMode('image');
+
+// تغییر به حالت دوربین
+await makeup.switchMode('camera');
+
+// بررسی حالت فعلی
+const info = makeup.getTechnicalInfo();
+console.log("حالت فعلی:", info.currentMode);</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- سوالات محصولات -->
+  <div class="faq-section">
+    <h3>سوالات مربوط به محصولات</h3>
+
+    <div class="faq-item">
+      <h4>Product UID چیست و چگونه آن را دریافت کنم؟</h4>
+      <div class="answer">
+        <p>Product UID شناسه یکتای محصول آرایشی شماست که شامل:</p>
+        <ul>
+          <li>تعریف انواع آرایش مجاز</li>
+          <li>رنگ‌ها و pattern های هر آرایش</li>
+          <li>تنظیمات خاص محصول</li>
+        </ul>
+        <p>برای دریافت Product UID:</p>
+        <ol>
+          <li>وارد پنل مدیریت ARmo شوید</li>
+          <li>محصول جدید ایجاد کنید</li>
+          <li>Product UID را از صفحه محصول کپی کنید</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>چگونه محصول را در زمان اجرا تغییر دهم؟</h4>
+      <div class="answer">
+        <div class="code-example">
+          <pre><code>// بارگذاری محصول جدید
+const newProduct = await makeup.loadProduct('NEW_PRODUCT_UID');
+
+if (newProduct && newProduct.success) {
+    console.log('محصول جدید لود شد:', newProduct.name);
+    console.log('ویژگی‌های جدید:', newProduct.features);
+} else {
+    console.error('خطا در بارگذاری محصول جدید');
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>چگونه بدانم چه ویژگی‌هایی در محصول فعلی فعال است؟</h4>
+      <div class="answer">
+        <div class="code-example">
+          <pre><code>// دریافت ویژگی‌های فعال
+const features = makeup.getAvailableFeatures();
+console.log('ویژگی‌های مجاز:', features);
+
+// بررسی ویژگی خاص
+if (makeup.isFeatureEnabled('eyeshadow')) {
+    // سایه چشم فعال است
+    makeup.changeMakeupColor('eyeshadow', '#8A2BE2');
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- سوالات پیاده‌سازی -->
+  <div class="faq-section">
+    <h3>سوالات پیاده‌سازی</h3>
+
+    <div class="faq-item">
+      <h4>چگونه می‌توانم از رنگ‌های سفارشی استفاده کنم؟</h4>
+      <div class="answer">
+        <p>در نسخه 3، رنگ‌ها از طریق محصول تعریف می‌شوند، اما می‌توانید:</p>
+        <div class="code-example">
+          <pre><code>// تغییر مستقیم رنگ
+makeup.changeMakeupColor("lips", "#FF0000");
+
+// استفاده از رنگ‌های از پیش تعریف شده محصول
+const info = makeup.getTechnicalInfo();
+console.log("رنگ‌های موجود:", info.availableColors);</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>چگونه در React از SDK استفاده کنم؟</h4>
+      <div class="answer">
+        <p>بهترین روش استفاده از Hook سفارشی است:</p>
+        <div class="code-example">
+          <pre><code>const { makeup, isReady, error } = useMakeup(token, productUid);
+
+// cleanup را فراموش نکنید
 useEffect(() => {
     return () => makeup?.cleanup();
 }, [makeup]);</code></pre>
-  </div>
-</div>
-
-<div class="step">
-  <h3>❓ چطور خطاها را مدیریت کنم؟</h3>
-  <p><strong>پاسخ:</strong> از callback های onError استفاده کنید:</p>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>Error Handling</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+        </div>
+      </div>
     </div>
-    <pre><code class="language-javascript">window.initMakeup({
-    productUid: 'YOUR_UID',
-    onError: (error) => {
-        if (error.name === 'NotAllowedError') {
-            alert('لطفاً اجازه دسترسی به دوربین را بدهید');
-        } else if (error.name === 'NotFoundError') {
-            alert('دوربین یافت نشد');
-        } else {
-            console.error('خطا:', error);
-        }
+
+    <div class="faq-item">
+      <h4>چگونه لودینگ سفارشی تعریف کنم؟</h4>
+      <div class="answer">
+        <p>با استفاده از callback های onReady:</p>
+        <div class="code-example">
+          <pre><code>const makeup = window.initMakeup({
+    productUid: "YOUR_PRODUCT_UID",
+    onReady: () => {
+        // مخفی کردن لودینگ سفارشی
+        document.getElementById("my-loading").style.display = "none";
     }
 });</code></pre>
-  </div>
-</div>
-
-<div class="step">
-  <h3>❓ چطور محصول را تغییر دهم؟</h3>
-  <p><strong>پاسخ:</strong> از متد loadProduct استفاده کنید:</p>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>Change Product</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+        </div>
+      </div>
     </div>
-    <pre><code class="language-javascript">// بارگذاری محصول جدید
-const newProduct = await makeup.loadProduct('NEW_PRODUCT_UID');
-if (newProduct) {
-    console.log('محصول تغییر یافت:', newProduct.name);
+  </div>
+
+  <!-- عیب‌یابی -->
+  <div class="faq-section">
+    <h3>عیب‌یابی</h3>
+
+    <div class="faq-item">
+      <h4>پیام "توکن نامعتبر است" دریافت می‌کنم</h4>
+      <div class="answer">
+        <ol>
+          <li>از معتبر بودن توکن اطمینان حاصل کنید</li>
+          <li>تاریخ انقضای توکن را بررسی کنید</li>
+          <li>
+            توکن را قبل از initMakeup تنظیم کنید:
+            <pre><code>window.Makeup.setToken("YOUR_TOKEN");
+const makeup = window.initMakeup(...);</code></pre>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>پیام "Product UID نامعتبر است" دریافت می‌کنم</h4>
+      <div class="answer">
+        <ul>
+          <li>Product UID را از پنل ARmo مجدداً کپی کنید</li>
+          <li>مطمئن شوید محصول منتشر شده باشد</li>
+          <li>بررسی کنید محصول حذف نشده باشد</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>در موبایل تصویر وارونه نمایش داده می‌شود</h4>
+      <div class="answer">
+        <p>این مشکل با افزودن CSS زیر برطرف می‌شود:</p>
+        <div class="code-example">
+          <pre><code>.armo-sdk-input-video {
+    transform: scaleX(-1);
 }</code></pre>
-  </div>
-</div>
-
-<h2>محدودیت‌ها و قیمت‌گذاری</h2>
-
-<div class="step">
-  <h3>❓ نسخه رایگان چه محدودیت‌هایی دارد؟</h3>
-  <p><strong>پاسخ:</strong></p>
-  <ul>
-    <li>لوگوی "Powered by ARmo" نمایش داده می‌شود</li>
-    <li>تعداد درخواست محدود است</li>
-    <li>برخی ویژگی‌های پیشرفته در دسترس نیست</li>
-  </ul>
-</div>
-
-<div class="step">
-  <h3>❓ چطور نسخه Premium بگیرم؟</h3>
-  <p>
-    <strong>پاسخ:</strong> از طریق سایت ARmo می‌توانید نسخه Premium خریداری کنید
-    که شامل:
-  </p>
-  <ul>
-    <li>حذف لوگو</li>
-    <li>درخواست‌های نامحدود</li>
-    <li>تمام ویژگی‌ها</li>
-    <li>پشتیبانی اولویت‌دار</li>
-  </ul>
-</div>
-
-<h2>مشکلات رایج</h2>
-
-<div class="step">
-  <h3>❓ SDK لود نمی‌شود</h3>
-  <p><strong>راه‌حل:</strong></p>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>Debug Loading</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+        </div>
+      </div>
     </div>
-    <pre><code class="language-javascript">// بررسی لود شدن SDK
+
+    <div class="faq-item">
+      <h4>SDK لود نمی‌شود یا کار نمی‌کند</h4>
+      <div class="answer">
+        <div class="code-example">
+          <pre><code>// بررسی لود شدن SDK
 if (typeof window.Makeup === 'undefined') {
     console.error('SDK لود نشده - script tag را چک کنید');
 } else {
     console.log('SDK لود شده');
     window.Makeup.setToken('YOUR_TOKEN');
-}</code></pre>
-  </div>
-</div>
+}
 
-<div class="step">
-  <h3>❓ Token نامعتبر است</h3>
-  <p><strong>راه‌حل:</strong></p>
-  <ul>
-    <li>Token را از پنل ARmo مجدداً کپی کنید</li>
-    <li>فاصله اضافی در Token نباشد</li>
-    <li>تاریخ انقضا را بررسی کنید</li>
-    <li>Token را قبل از initMakeup set کنید</li>
-  </ul>
-</div>
-
-<div class="step">
-  <h3>❓ رنگ‌ها اعمال نمی‌شوند</h3>
-  <p><strong>راه‌حل:</strong></p>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>Check Status</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+// بررسی وضعیت
+const status = makeup?.getStatus();
+console.log('وضعیت SDK:', status);</code></pre>
+        </div>
+      </div>
     </div>
-    <pre><code class="language-javascript">// بررسی آماده بودن SDK
-if (makeup.getStatus() === 'ready') {
-    makeup.changeMakeupColor('lips', '#FF0000');
-} else {
-    console.log('SDK هنوز آماده نیست');
-}</code></pre>
   </div>
-</div>
 
-<h2>پشتیبانی</h2>
-
-<div class="info-box">
-  <h3>🆘 نیاز به کمک دارید؟</h3>
-  <ul>
-    <li><strong>مستندات:</strong> این راهنما را کاملاً مطالعه کنید</li>
-    <li><strong>Console:</strong> خطاهای مرورگر را بررسی کنید</li>
-    <li><strong>تست:</strong> روی localhost ابتدا تست کنید</li>
-    <li>
-      <strong>تماس:</strong> از طریق سایت armogroup.tech با پشتیبانی تماس بگیرید
-    </li>
-  </ul>
-</div>
-
-<div class="warning-box">
-  <h3>⚠️ نکات مهم:</h3>
-  <ul>
-    <li>هیچ‌وقت Token را در کد عمومی قرار ندهید</li>
-    <li>از متغیرهای محیطی استفاده کنید</li>
-    <li>SDK را فقط از CDN رسمی لود کنید</li>
-    <li>cleanup را فراموش نکنید</li>
-  </ul>
-</div>
+  <!-- بخش پشتیبانی -->
+  <div class="support-section">
+    <h3>نیاز به پشتیبانی دارید؟</h3>
+    <p>
+      اگر پاسخ سوال خود را پیدا نکردید، می‌توانید از طریق راه‌های زیر با ما در
+      تماس باشید:
+    </p>
+    <div class="contact-info">
+      <p>تلفن همراه: <a href="tel:09370180730">09370180730</a></p>
+      <p>تلفن ثابت: <a href="tel:02128424173">02128424173</a></p>
+      <p>ایمیل: <a href="mailto:info@armogroup.tech">info@armogroup.tech</a></p>
+    </div>
+  </div>
+  <div class="update-date">آخرین به‌روزرسانی: ۰۸ خرداد ۱۴۰۳</div>
+</section>

@@ -1,0 +1,191 @@
+<section class="features">
+  <h2>امکانات اصلی</h2>
+
+  <!-- تشخیص چهره -->
+  <div class="feature-section">
+    <h3>تشخیص چهره هوشمند</h3>
+    <p>SDK به صورت خودکار وضعیت تشخیص چهره را مدیریت می‌کند:</p>
+
+    <div class="feature-card">
+      <h4>تشخیص عدم وجود چهره</h4>
+      <p>در صورت عدم تشخیص چهره، یک راهنمای بصری نمایش داده می‌شود.</p>
+    </div>
+  </div>
+
+  <!-- انواع آرایش -->
+  <div class="feature-section" id="makeup-types">
+    <h3>انواع آرایش و الگوها</h3>
+    <table class="feature-table">
+      <thead>
+        <tr>
+          <th>نوع آرایش</th>
+          <th>کد</th>
+          <th>الگو‌های پشتیبانی شده</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>رژ لب</td>
+          <td><code>lips</code></td>
+          <td>normal, matte, glossy, glitter</td>
+        </tr>
+        <tr>
+          <td>سایه چشم</td>
+          <td><code>eyeshadow</code></td>
+          <td>normal, shimmer, glitter, metallic</td>
+        </tr>
+        <tr>
+          <td>خط چشم</td>
+          <td><code>eyeliner</code></td>
+          <td>normal</td>
+        </tr>
+        <tr>
+          <td>مژه مصنوعی</td>
+          <td><code>eyelashes</code></td>
+          <td>normal</td>
+        </tr>
+        <tr>
+          <td>رژگونه</td>
+          <td><code>blush</code></td>
+          <td>normal</td>
+        </tr>
+        <tr>
+          <td>کرم پودر</td>
+          <td><code>foundation</code></td>
+          <td>normal</td>
+        </tr>
+        <tr>
+          <td>ابرو</td>
+          <td><code>brows</code></td>
+          <td>normal</td>
+        </tr>
+        <tr>
+          <td>کانسیلر</td>
+          <td><code>concealer</code></td>
+          <td>normal</td>
+        </tr>
+        <tr>
+          <td>لنز رنگی</td>
+          <td><code>lens</code></td>
+          <td>rainbow, crystal-colors, dahab-platinum, desio-attitude</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- حالت‌های کار -->
+  <div class="feature-section" id="work-modes">
+    <h3>حالت‌های کار</h3>
+    <p>SDK از دو حالت کار پشتیبانی می‌کند:</p>
+
+    <table class="feature-table">
+      <tr>
+        <th>حالت</th>
+        <th>توضیحات</th>
+        <th>کاربرد</th>
+      </tr>
+      <tr>
+        <td><code>camera</code></td>
+        <td>آرایش زنده روی دوربین</td>
+        <td>آرایش در زمان واقعی</td>
+      </tr>
+      <tr>
+        <td><code>image</code></td>
+        <td>آپلود و آرایش تصاویر</td>
+        <td>ویرایش تصاویر موجود</td>
+      </tr>
+    </table>
+
+    <div class="note">
+      <p>نکته: می‌توانید در طول استفاده، بین این دو حالت جابجا شوید.</p>
+    </div>
+  </div>
+
+  <!-- تنظیمات دوربین -->
+  <div class="feature-section" id="camera">
+    <h3>دوربین</h3>
+    <p>SDK از تنظیمات استاندارد زیر برای دوربین استفاده می‌کند:</p>
+
+    <table class="feature-table">
+      <tr>
+        <th>پارامتر</th>
+        <th>مقدار</th>
+      </tr>
+      <tr>
+        <td>رزولوشن</td>
+        <td>1280×720 پیکسل</td>
+      </tr>
+      <tr>
+        <td>جهت دوربین</td>
+        <td>دوربین جلو</td>
+      </tr>
+    </table>
+
+    <div class="note">
+      <p>
+        نکته: در صورتی که دستگاه کاربر از این رزولوشن پشتیبانی نکند، به صورت
+        خودکار از بهترین رزولوشن قابل دسترس استفاده خواهد شد.
+      </p>
+    </div>
+  </div>
+
+  <!-- تشخیص نور محیط -->
+  <div class="feature-section">
+    <h3>تشخیص نور محیط</h3>
+    <p>SDK به صورت خودکار شرایط نوری محیط را بررسی می‌کند:</p>
+    <ul>
+      <li>آستانه روشنایی: 80 از 255</li>
+      <li>نمایش خودکار هشدار در شرایط کم‌نور</li>
+      <li>تنظیم خودکار پارامترهای تصویر</li>
+    </ul>
+  </div>
+
+  <!-- Callbacks -->
+  <div class="feature-section" id="callback-method">
+    <h3>Callbacks</h3>
+    <p>SDK دو callback اصلی را ارائه می‌دهد:</p>
+    <div class="code-block">
+      <pre><code>const makeup = window.initMakeup({
+    productUid: 'YOUR_PRODUCT_UID',
+    onReady: () => {
+        console.log("SDK آماده استفاده است");
+        // مخفی کردن loading
+        document.getElementById("loading").style.display = "none";
+    },
+    onError: (error) => {
+        console.error("خطا در SDK:", error);
+        // نمایش پیغام خطا
+        showError(error.message);
+    }
+});</code></pre>
+    </div>
+  </div>
+
+  <!-- مدیریت محصولات -->
+  <div class="feature-section" id="product-management">
+    <h3>مدیریت محصولات</h3>
+    <p>یکی از ویژگی‌های کلیدی نسخه 3، قابلیت مدیریت محصولات مختلف است:</p>
+
+    <div class="feature-card">
+      <h4>تغییر محصول در زمان اجرا</h4>
+      <p>می‌توانید بدون راه‌اندازی مجدد SDK، محصول فعال را تغییر دهید.</p>
+      <div class="code-block">
+        <pre><code>// بارگذاری محصول جدید
+const newProduct = await makeup.loadProduct('NEW_PRODUCT_UID');
+if (newProduct) {
+    console.log('محصول جدید لود شد:', newProduct.name);
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <h4>اطلاعات محصول</h4>
+      <p>دسترسی به اطلاعات تفصیلی محصول فعال:</p>
+      <div class="code-block">
+        <pre><code>const info = makeup.getTechnicalInfo();
+console.log('محصول فعال:', info.currentProduct);
+console.log('ویژگی‌های فعال:', info.enabledFeatures);</code></pre>
+      </div>
+    </div>
+  </div>
+</section>

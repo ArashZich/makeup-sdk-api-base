@@ -1,292 +1,403 @@
-<h1>API Reference</h1>
+<section class="api">
+  <h2>API Reference</h2>
 
-<p>مستندات کامل متدهای SDK آرایش مجازی v3</p>
+  <!-- راه‌اندازی و مقداردهی اولیه -->
+  <div class="api-section">
+    <h3>راه‌اندازی SDK</h3>
 
-<h2>راه‌اندازی اولیه</h2>
-
-<div class="step">
-  <h3>window.Makeup.setToken()</h3>
-  <p>تنظیم Token احراز هویت</p>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>JavaScript</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+    <div class="api-method">
+      <h4>window.Makeup.setToken(token)</h4>
+      <p>تنظیم Token احراز هویت</p>
+      <table class="api-params">
+        <tr>
+          <th>پارامتر</th>
+          <th>نوع</th>
+          <th>توضیحات</th>
+        </tr>
+        <tr>
+          <td>token</td>
+          <td>String</td>
+          <td>کلید احراز هویت (اجباری)</td>
+        </tr>
+      </table>
+      <div class="code-block">
+        <pre><code>window.Makeup.setToken("YOUR_TOKEN_HERE");</code></pre>
+      </div>
     </div>
-    <pre><code class="language-javascript">window.Makeup.setToken(token)
 
-// Parameters:
-// token (string): کلید احراز هویت
-
-// Example:
-window.Makeup.setToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...');</code></pre>
-  </div>
-</div>
-
-<div class="step">
-  <h3>window.initMakeup()</h3>
-  <p>راه‌اندازی SDK</p>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>JavaScript</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
-    </div>
-    <pre><code class="language-javascript">const makeup = window.initMakeup(options)
-
-// Parameters:
-// options (object): تنظیمات SDK
-
-// Options:
-{
-    productUid: 'string',        // شناسه محصول (اجباری)
-    showColorPicker: boolean,    // نمایش انتخابگر رنگ
-    transparency: number,        // شفافیت (0-1)
-    onReady: function,          // تابع آماده‌سازی
-    onError: function           // تابع خطا
-}
-
-// Example:
-const makeup = window.initMakeup({
-    productUid: 'wMJ2JzpI',
-    onReady: () => console.log('آماده!'),
+    <div class="api-method">
+      <h4>window.initMakeup(options)</h4>
+      <p>راه‌اندازی SDK</p>
+      <table class="api-params">
+        <tr>
+          <th>پارامتر</th>
+          <th>نوع</th>
+          <th>پیش‌فرض</th>
+          <th>توضیحات</th>
+        </tr>
+        <tr>
+          <td>productUid</td>
+          <td>String</td>
+          <td>-</td>
+          <td>شناسه محصول (اجباری)</td>
+        </tr>
+        <tr>
+          <td>mode</td>
+          <td>String</td>
+          <td>"camera"</td>
+          <td>حالت کار: "camera" یا "image"</td>
+        </tr>
+        <tr>
+          <td>showColorPicker</td>
+          <td>Boolean</td>
+          <td>true</td>
+          <td>نمایش انتخابگر رنگ داخلی</td>
+        </tr>
+        <tr>
+          <td>transparency</td>
+          <td>Number</td>
+          <td>0.8</td>
+          <td>شفافیت کلی (0 تا 1)</td>
+        </tr>
+        <tr>
+          <td>onReady</td>
+          <td>Function</td>
+          <td>-</td>
+          <td>تابع callback آماده‌سازی</td>
+        </tr>
+        <tr>
+          <td>onError</td>
+          <td>Function</td>
+          <td>-</td>
+          <td>تابع callback خطا</td>
+        </tr>
+      </table>
+      <div class="code-block">
+        <pre><code>const makeup = window.initMakeup({
+    productUid: "YOUR_PRODUCT_UID",
+    mode: "camera",
+    onReady: () => console.log("آماده!"),
     onError: (error) => console.error(error)
 });</code></pre>
-  </div>
-</div>
-
-<h2>کنترل آرایش</h2>
-
-<div class="step">
-  <h3>changeMakeupColor()</h3>
-  <p>تغییر رنگ آرایش</p>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>JavaScript</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+      </div>
     </div>
-    <pre><code class="language-javascript">makeup.changeMakeupColor(type, color, code)
-
-// Parameters:
-// type (string): نوع آرایش
-// color (string): کد رنگ هگز
-// code (string): کد رنگ (اختیاری)
-
-// Types:
-'lips', 'eyeshadow', 'eyelashes', 'blush', 'foundation', 
-'brows', 'eyeliner', 'concealer', 'lens'
-
-// Examples:
-makeup.changeMakeupColor('lips', '#FF69B4');
-makeup.changeMakeupColor('eyeshadow', '#8A2BE2');
-makeup.changeMakeupColor('blush', '#FF6B6B', 'pink-001');</code></pre>
   </div>
-</div>
 
-<div class="step">
-  <h3>changeMakeupPattern()</h3>
-  <p>تغییر pattern آرایش</p>
+  <!-- متدهای کنترل آرایش -->
+  <div class="api-section">
+    <h3>کنترل آرایش</h3>
 
-  <div class="code-container">
-    <div class="code-header">
-      <span>JavaScript</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+    <div class="api-method">
+      <h4>changeMakeupColor(type, color, code)</h4>
+      <p>تغییر رنگ آرایش</p>
+      <table class="api-params">
+        <tr>
+          <th>پارامتر</th>
+          <th>نوع</th>
+          <th>توضیحات</th>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>String</td>
+          <td>
+            نوع آرایش: lips, eyeshadow, eyelashes, blush, foundation, brows,
+            eyeliner, concealer, lens
+          </td>
+        </tr>
+        <tr>
+          <td>color</td>
+          <td>String</td>
+          <td>کد رنگ HEX (مثل #FF0000)</td>
+        </tr>
+        <tr>
+          <td>code</td>
+          <td>String</td>
+          <td>کد شناسایی رنگ (اختیاری)</td>
+        </tr>
+      </table>
+      <div class="code-block">
+        <pre><code>// تغییر رنگ رژ لب
+makeup.changeMakeupColor("lips", "#FF69B4");
+
+// تغییر رنگ سایه چشم با کد
+makeup.changeMakeupColor("eyeshadow", "#8A2BE2", "ES01");</code></pre>
+      </div>
     </div>
-    <pre><code class="language-javascript">makeup.changeMakeupPattern(type, pattern)
 
-// Parameters:
-// type (string): نوع آرایش
-// pattern (string): نوع pattern
+    <div class="api-method">
+      <h4>changeMakeupPattern(type, pattern)</h4>
+      <p>تغییر الگوی آرایش</p>
+      <table class="api-params">
+        <tr>
+          <th>پارامتر</th>
+          <th>نوع</th>
+          <th>توضیحات</th>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>String</td>
+          <td>نوع آرایش</td>
+        </tr>
+        <tr>
+          <td>pattern</td>
+          <td>String</td>
+          <td>الگوی مورد نظر</td>
+        </tr>
+      </table>
 
-// Lip Patterns:
-'normal', 'matte', 'glossy', 'glitter'
+      <h5>الگوهای پشتیبانی شده:</h5>
+      <ul>
+        <li><strong>رژ لب:</strong> normal, matte, glossy, glitter</li>
+        <li><strong>سایه چشم:</strong> normal, shimmer, glitter, metallic</li>
+        <li>
+          <strong>لنز:</strong> rainbow, crystal-colors, dahab-platinum,
+          desio-attitude
+        </li>
+        <li><strong>سایر:</strong> normal</li>
+      </ul>
 
-// Eyeshadow Patterns:
-'normal', 'shimmer', 'glitter', 'metallic'
+      <div class="code-block">
+        <pre><code>// تغییر الگوی رژ لب به مات
+makeup.changeMakeupPattern("lips", "matte");
 
-// Lens Patterns:
-'rainbow', 'crystal-colors', 'dahab-platinum', 'desio-attitude'
-
-// Examples:
-makeup.changeMakeupPattern('lips', 'matte');
-makeup.changeMakeupPattern('eyeshadow', 'shimmer');
-makeup.changeMakeupPattern('lens', 'rainbow');</code></pre>
+// تغییر الگوی سایه چشم به براق
+makeup.changeMakeupPattern("eyeshadow", "shimmer");</code></pre>
+      </div>
+    </div>
   </div>
-</div>
 
-<h2>مدیریت حالت</h2>
+  <!-- مدیریت حالت -->
+  <div class="api-section">
+    <h3>مدیریت حالت</h3>
 
-<div class="step">
-  <h3>switchMode()</h3>
-  <p>تغییر حالت دوربین/تصویر</p>
+    <div class="api-method">
+      <h4>switchMode(mode)</h4>
+      <p>تغییر حالت کار SDK</p>
+      <table class="api-params">
+        <tr>
+          <th>پارامتر</th>
+          <th>نوع</th>
+          <th>توضیحات</th>
+        </tr>
+        <tr>
+          <td>mode</td>
+          <td>String</td>
+          <td>"camera" برای آرایش زنده، "image" برای آپلود تصویر</td>
+        </tr>
+      </table>
+      <div class="code-block">
+        <pre><code>// تغییر به حالت دوربین
+await makeup.switchMode("camera");
 
-  <div class="code-container">
-    <div class="code-header">
-      <span>JavaScript</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+// تغییر به حالت تصویر
+await makeup.switchMode("image");</code></pre>
+      </div>
     </div>
-    <pre><code class="language-javascript">await makeup.switchMode(mode)
 
-// Parameters:
-// mode (string): 'camera' | 'image'
-
-// Examples:
-await makeup.switchMode('camera');  // حالت دوربین
-await makeup.switchMode('image');   // حالت تصویر</code></pre>
-  </div>
-</div>
-
-<div class="step">
-  <h3>loadProduct()</h3>
-  <p>بارگذاری محصول جدید</p>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>JavaScript</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
-    </div>
-    <pre><code class="language-javascript">const product = await makeup.loadProduct(productUid)
-
-// Parameters:
-// productUid (string): شناسه محصول جدید
-
-// Returns:
-// product (object): اطلاعات محصول یا null
-
-// Example:
-const newProduct = await makeup.loadProduct('ABC123XYZ');
-if (newProduct) {
-    console.log('محصول جدید لود شد:', newProduct.name);
+    <div class="api-method">
+      <h4>loadProduct(productUid)</h4>
+      <p>بارگذاری محصول جدید</p>
+      <table class="api-params">
+        <tr>
+          <th>پارامتر</th>
+          <th>نوع</th>
+          <th>توضیحات</th>
+        </tr>
+        <tr>
+          <td>productUid</td>
+          <td>String</td>
+          <td>شناسه محصول جدید</td>
+        </tr>
+      </table>
+      <div class="api-response">
+        <h5>پاسخ:</h5>
+        <div class="response-example">
+          <pre><code>{
+  name: "نام محصول",
+  uid: "شناسه محصول",
+  features: ["lips", "eyeshadow", ...],
+  success: true
 }</code></pre>
-  </div>
-</div>
-
-<h2>اطلاعات SDK</h2>
-
-<div class="step">
-  <h3>getStatus()</h3>
-  <p>دریافت وضعیت SDK</p>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>JavaScript</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
-    </div>
-    <pre><code class="language-javascript">const status = makeup.getStatus()
-
-// Returns:
-// 'initializing' | 'loading' | 'ready' | 'error' | 'paused' | 'cleanup'
-
-// Example:
-if (makeup.getStatus() === 'ready') {
-    makeup.changeMakeupColor('lips', '#FF0000');
+        </div>
+      </div>
+      <div class="code-block">
+        <pre><code>const product = await makeup.loadProduct("NEW_PRODUCT_UID");
+if (product && product.success) {
+    console.log("محصول جدید لود شد:", product.name);
 }</code></pre>
-  </div>
-</div>
-
-<div class="step">
-  <h3>getTechnicalInfo()</h3>
-  <p>دریافت اطلاعات فنی</p>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>JavaScript</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+      </div>
     </div>
-    <pre><code class="language-javascript">const info = makeup.getTechnicalInfo()
-
-// Returns:
-{
-    version: "v3",
-    status: "ready",
-    currentMakeupType: "lips",
-    currentColor: "#FF69B4",
-    currentPattern: "matte",
-    isPremium: false,
-    enabledFeatures: ["lips", "eyeshadow", ...],
-    resolution: { width: 1280, height: 720 },
-    browser: { userAgent: "...", isMobile: false }
-}
-
-// Example:
-const info = makeup.getTechnicalInfo();
-console.log('نسخه SDK:', info.version);
-console.log('رنگ فعلی:', info.currentColor);</code></pre>
   </div>
-</div>
 
-<h2>بررسی ویژگی‌ها</h2>
+  <!-- اطلاعات SDK -->
+  <div class="api-section">
+    <h3>اطلاعات SDK</h3>
 
-<div class="step">
-  <h3>isFeatureEnabled()</h3>
-  <p>بررسی فعال بودن ویژگی</p>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>JavaScript</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
-    </div>
-    <pre><code class="language-javascript">const isEnabled = makeup.isFeatureEnabled(feature)
-
-// Parameters:
-// feature (string): نام ویژگی
-
-// Example:
-if (makeup.isFeatureEnabled('eyeshadow')) {
-    makeup.changeMakeupColor('eyeshadow', '#8A2BE2');
+    <div class="api-method">
+      <h4>getStatus()</h4>
+      <p>دریافت وضعیت فعلی SDK</p>
+      <div class="api-response">
+        <h5>مقادیر ممکن:</h5>
+        <ul>
+          <li><code>initializing</code> - در حال راه‌اندازی</li>
+          <li><code>loading</code> - در حال بارگذاری</li>
+          <li><code>ready</code> - آماده استفاده</li>
+          <li><code>error</code> - خطا در راه‌اندازی</li>
+          <li><code>paused</code> - متوقف شده</li>
+          <li><code>cleanup</code> - در حال پاکسازی</li>
+        </ul>
+      </div>
+      <div class="code-block">
+        <pre><code>const status = makeup.getStatus();
+if (status === "ready") {
+    // SDK آماده استفاده است
+    makeup.changeMakeupColor("lips", "#FF0000");
 }</code></pre>
-  </div>
-</div>
-
-<div class="step">
-  <h3>getAvailableFeatures()</h3>
-  <p>دریافت لیست ویژگی‌های مجاز</p>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>JavaScript</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+      </div>
     </div>
-    <pre><code class="language-javascript">const features = makeup.getAvailableFeatures()
 
-// Returns: array of strings
-
-// Example:
-const features = makeup.getAvailableFeatures();
-console.log('ویژگی‌های مجاز:', features);
-// ['lips', 'eyeshadow', 'blush', ...]</code></pre>
-  </div>
-</div>
-
-<h2>پاکسازی</h2>
-
-<div class="step">
-  <h3>cleanup()</h3>
-  <p>پاکسازی منابع SDK</p>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>JavaScript</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+    <div class="api-method">
+      <h4>getTechnicalInfo()</h4>
+      <p>دریافت اطلاعات تفصیلی SDK</p>
+      <div class="api-response">
+        <h5>نمونه پاسخ:</h5>
+        <div class="response-example">
+          <pre><code>{
+  version: "v3.0.0",
+  status: "ready",
+  currentMakeupType: "lips",
+  currentColor: "#FF69B4",
+  currentPattern: "matte",
+  currentProduct: {
+    uid: "YOUR_PRODUCT_UID",
+    name: "نام محصول"
+  },
+  isPremium: false,
+  enabledFeatures: ["lips", "eyeshadow", "blush"],
+  resolution: { width: 1280, height: 720 },
+  browser: {
+    userAgent: "Mozilla/5.0...",
+    isMobile: false
+  }
+}</code></pre>
+        </div>
+      </div>
+      <div class="code-block">
+        <pre><code>const info = makeup.getTechnicalInfo();
+console.log("نسخه SDK:", info.version);
+console.log("محصول فعال:", info.currentProduct.name);
+console.log("ویژگی‌های فعال:", info.enabledFeatures);</code></pre>
+      </div>
     </div>
-    <pre><code class="language-javascript">makeup.cleanup()
+  </div>
 
-// استفاده در React:
+  <!-- بررسی ویژگی‌ها -->
+  <div class="api-section">
+    <h3>بررسی ویژگی‌ها</h3>
+
+    <div class="api-method">
+      <h4>isFeatureEnabled(feature)</h4>
+      <p>بررسی فعال بودن یک ویژگی خاص</p>
+      <table class="api-params">
+        <tr>
+          <th>پارامتر</th>
+          <th>نوع</th>
+          <th>توضیحات</th>
+        </tr>
+        <tr>
+          <td>feature</td>
+          <td>String</td>
+          <td>نام ویژگی مورد نظر</td>
+        </tr>
+      </table>
+      <div class="code-block">
+        <pre><code>if (makeup.isFeatureEnabled("eyeshadow")) {
+    makeup.changeMakeupColor("eyeshadow", "#8A2BE2");
+} else {
+    console.log("سایه چشم در دسترس نیست");
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="api-method">
+      <h4>getAvailableFeatures()</h4>
+      <p>دریافت لیست تمام ویژگی‌های مجاز</p>
+      <div class="code-block">
+        <pre><code>const features = makeup.getAvailableFeatures();
+console.log("ویژگی‌های مجاز:", features);
+// خروجی: ["lips", "eyeshadow", "blush", ...]</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- پاکسازی -->
+  <div class="api-section">
+    <h3>پاکسازی منابع</h3>
+
+    <div class="api-method">
+      <h4>cleanup()</h4>
+      <p>پاکسازی منابع SDK و آزادسازی حافظه</p>
+      <div class="code-block">
+        <pre><code>// پاکسازی دستی
+makeup.cleanup();
+
+// پاکسازی در React
 useEffect(() => {
     return () => {
         makeup?.cleanup();
     };
 }, [makeup]);</code></pre>
+      </div>
+      <div class="note">
+        <p>
+          <strong>مهم:</strong> حتماً در پایان استفاده از SDK، cleanup را
+          فراخوانی کنید تا منابع آزاد شوند.
+        </p>
+      </div>
+    </div>
   </div>
-</div>
 
-<div class="warning-box">
-  <h3>نکات مهم API:</h3>
-  <ul>
-    <li>همیشه قبل از initMakeup، Token را set کنید</li>
-    <li>منتظر onReady شدن باشید قبل از استفاده از متدها</li>
-    <li>async متدها را با await فراخوانی کنید</li>
-    <li>در React، cleanup را فراموش نکنید</li>
-  </ul>
-</div>
+  <!-- مثال کامل استفاده -->
+  <div class="api-section">
+    <h3>مثال کامل</h3>
+    <div class="code-block">
+      <pre><code>// تنظیم Token
+window.Makeup.setToken("YOUR_TOKEN");
+
+// راه‌اندازی SDK
+const makeup = window.initMakeup({
+    productUid: "YOUR_PRODUCT_UID",
+    onReady: async () => {
+        console.log("SDK آماده است");
+        
+        // بررسی ویژگی‌های مجاز
+        const features = makeup.getAvailableFeatures();
+        console.log("ویژگی‌های مجاز:", features);
+        
+        // تغییر رنگ رژ لب
+        if (makeup.isFeatureEnabled("lips")) {
+            makeup.changeMakeupColor("lips", "#FF69B4");
+            makeup.changeMakeupPattern("lips", "matte");
+        }
+        
+        // تغییر به حالت تصویر
+        await makeup.switchMode("image");
+        
+        // بارگذاری محصول جدید
+        const newProduct = await makeup.loadProduct("NEW_PRODUCT_UID");
+        if (newProduct) {
+            console.log("محصول جدید:", newProduct.name);
+        }
+    },
+    onError: (error) => {
+        console.error("خطا در SDK:", error);
+    }
+});
+
+// پاکسازی هنگام خروج از صفحه
+window.addEventListener("beforeunload", () => {
+    makeup?.cleanup();
+});</code></pre>
+    </div>
+  </div>
+</section>

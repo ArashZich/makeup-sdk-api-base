@@ -1,160 +1,188 @@
-<h1>شروع سریع</h1>
+<section id="quick-start">
+  <h2>شروع سریع</h2>
 
-<p>در کمتر از 5 دقیقه SDK را راه‌اندازی کنید.</p>
-
-<h2>مرحله 1: اضافه کردن SDK</h2>
-
-<div class="step">
-  <h3>فایل‌های CSS و JS</h3>
-  <p>این کدها را به HTML خود اضافه کنید:</p>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>HTML</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+  <div id="token" class="step-card">
+    <h3>1. دریافت توکن و Product UID</h3>
+    <p>برای استفاده از SDK نسخه 3، نیاز به دو مورد دارید:</p>
+    <ul>
+      <li><strong>Token:</strong> کلید احراز هویت شما</li>
+      <li>
+        <strong>Product UID:</strong> شناسه محصول آرایشی که می‌خواهید استفاده
+        کنید
+      </li>
+    </ul>
+    <div class="note">
+      <p>
+        نکته: هر دو مورد از طریق پنل مدیریت ARmo قابل دریافت هستند. ابتدا محصول
+        خود را ایجاد کنید سپس Product UID آن را کپی کنید.
+      </p>
     </div>
-    <pre><code class="language-html">&lt;!-- CSS --&gt;
-&lt;link rel="stylesheet" href="https://cdn.makeup.armogroup.tech/sdk/v3/makeup.min.css"&gt;
+  </div>
 
-&lt;!-- JavaScript --&gt;
+  <div id="installation" class="step-card">
+    <h3>2. افزودن کتابخانه</h3>
+    <p>فایل‌های مورد نیاز را به پروژه خود اضافه کنید:</p>
+    <div class="code-block">
+      <pre><code id="install-code">&lt;link rel="stylesheet" href="https://cdn.makeup.armogroup.tech/sdk/v3/makeup.min.css"&gt;
 &lt;script src="https://cdn.makeup.armogroup.tech/sdk/v3/makeup.min.js"&gt;&lt;/script&gt;</code></pre>
-  </div>
-</div>
-
-<h2>مرحله 2: HTML ساختار</h2>
-
-<div class="step">
-  <h3>المنت مورد نیاز</h3>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>HTML</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+      <button class="copy-btn" data-clipboard-target="#install-code">
+        کپی
+      </button>
     </div>
-    <pre><code class="language-html">&lt;div id="armo-makeup-view"&gt;&lt;/div&gt;</code></pre>
   </div>
-</div>
 
-<h2>مرحله 3: راه‌اندازی</h2>
+  <div id="basic-setup" class="step-card">
+    <h3>3. راه‌اندازی اولیه</h3>
 
-<div class="step">
-  <h3>تنظیم Token و ProductUID</h3>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>JavaScript</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+    <h4>3.1. افزودن المان پایه</h4>
+    <div class="code-block">
+      <pre><code id="basic-element">&lt;div id="armo-makeup-view"&gt;&lt;/div&gt;</code></pre>
+      <button class="copy-btn" data-clipboard-target="#basic-element">
+        کپی
+      </button>
     </div>
-    <pre><code class="language-javascript">// تنظیم Token
-window.Makeup.setToken('YOUR_TOKEN_HERE');
 
-// راه‌اندازی SDK
-const makeup = window.initMakeup({
-    productUid: 'YOUR_PRODUCT_UID',
-    onReady: () => {
-        console.log('SDK آماده است!');
-    },
-    onError: (error) => {
-        console.error('خطا:', error);
-    }
+    <h4>3.2. راه‌اندازی SDK</h4>
+    <div class="code-block">
+      <pre><code id="init-code">document.addEventListener("DOMContentLoaded", () => {
+    // تنظیم توکن
+    window.Makeup.setToken("YOUR_TOKEN_HERE");
+
+    // راه‌اندازی SDK
+    const makeup = window.initMakeup({
+        productUid: "YOUR_PRODUCT_UID",
+        onReady: () => {
+            console.log("SDK آماده استفاده است");
+        },
+        onError: (error) => {
+            console.error("خطا در SDK:", error);
+        }
+    });
+
+    // ذخیره reference برای استفاده بعدی
+    window.makeupInstance = makeup;
 });</code></pre>
-  </div>
-</div>
-
-<h2>مرحله 4: استفاده از API</h2>
-
-<div class="step">
-  <h3>کنترل آرایش</h3>
-
-  <div class="code-container">
-    <div class="code-header">
-      <span>JavaScript</span>
-      <button class="copy-btn" onclick="copyCode(this)">کپی</button>
+      <button class="copy-btn" data-clipboard-target="#init-code">کپی</button>
     </div>
-    <pre><code class="language-javascript">// تغییر رنگ آرایش
-makeup.changeMakeupColor('lips', '#FF6B9D');
 
-// تغییر pattern آرایش
+    <div class="configuration-options">
+      <h4>گزینه‌های پیکربندی</h4>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>گزینه</th>
+            <th>نوع</th>
+            <th>پیش‌فرض</th>
+            <th>توضیحات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>productUid</code></td>
+            <td>String</td>
+            <td>-</td>
+            <td>شناسه محصول (اجباری)</td>
+          </tr>
+          <tr>
+            <td><code>mode</code></td>
+            <td>String</td>
+            <td><code>"camera"</code></td>
+            <td>حالت کار: camera یا image</td>
+          </tr>
+          <tr>
+            <td><code>showColorPicker</code></td>
+            <td>Boolean</td>
+            <td><code>true</code></td>
+            <td>نمایش/عدم نمایش انتخابگر رنگ داخلی</td>
+          </tr>
+          <tr>
+            <td><code>transparency</code></td>
+            <td>Number</td>
+            <td><code>0.8</code></td>
+            <td>شفافیت کلی آرایش (0 تا 1)</td>
+          </tr>
+          <tr>
+            <td><code>onReady</code></td>
+            <td>Function</td>
+            <td><code>() => {}</code></td>
+            <td>تابع callback برای زمان آماده شدن SDK</td>
+          </tr>
+          <tr>
+            <td><code>onError</code></td>
+            <td>Function</td>
+            <td><code>() => {}</code></td>
+            <td>تابع callback برای زمان بروز خطا</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="status-check">
+      <h4>بررسی وضعیت SDK</h4>
+      <p>
+        می‌توانید وضعیت فعلی SDK را با استفاده از متد
+        <code>getStatus()</code> بررسی کنید:
+      </p>
+      <div class="code-block">
+        <pre><code id="status-code">const status = makeup.getStatus();
+// status می‌تواند یکی از این مقادیر باشد:
+// - 'initializing': در حال راه‌اندازی اولیه
+// - 'loading': در حال بارگذاری منابع
+// - 'ready': آماده استفاده
+// - 'error': خطا در راه‌اندازی
+// - 'paused': متوقف شده
+// - 'cleanup': در حال پاکسازی</code></pre>
+        <button class="copy-btn" data-clipboard-target="#status-code">
+          کپی
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="basic-usage" class="step-card">
+    <h3>4. استفاده اولیه</h3>
+    <p>
+      پس از راه‌اندازی موفق SDK، می‌توانید شروع به استفاده از قابلیت‌های آن
+      کنید:
+    </p>
+
+    <h4>4.1. تغییر رنگ آرایش</h4>
+    <div class="code-block">
+      <pre><code id="change-color-code">// تغییر رنگ رژ لب
+makeup.changeMakeupColor('lips', '#FF69B4');
+
+// تغییر رنگ سایه چشم
+makeup.changeMakeupColor('eyeshadow', '#8A2BE2');
+
+// تغییر رنگ رژگونه
+makeup.changeMakeupColor('blush', '#FF6B6B');</code></pre>
+      <button class="copy-btn" data-clipboard-target="#change-color-code">
+        کپی
+      </button>
+    </div>
+
+    <h4>4.2. تغییر pattern آرایش</h4>
+    <div class="code-block">
+      <pre><code id="change-pattern-code">// تغییر pattern رژ لب به matte
 makeup.changeMakeupPattern('lips', 'matte');
 
-// تغییر حالت به تصویر
+// تغییر pattern سایه چشم به shimmer
+makeup.changeMakeupPattern('eyeshadow', 'shimmer');</code></pre>
+      <button class="copy-btn" data-clipboard-target="#change-pattern-code">
+        کپی
+      </button>
+    </div>
+
+    <h4>4.3. تغییر حالت به تصویر</h4>
+    <div class="code-block">
+      <pre><code id="switch-mode-code">// تغییر به حالت تصویر
 await makeup.switchMode('image');
 
-// بارگذاری محصول جدید
-await makeup.loadProduct('NEW_PRODUCT_UID');</code></pre>
+// تغییر مجدد به حالت دوربین
+await makeup.switchMode('camera');</code></pre>
+      <button class="copy-btn" data-clipboard-target="#switch-mode-code">
+        کپی
+      </button>
+    </div>
   </div>
-</div>
-
-<h2>مثال کامل</h2>
-
-<div class="code-container">
-  <div class="code-header">
-    <span>index.html</span>
-    <button class="copy-btn" onclick="copyCode(this)">کپی</button>
-  </div>
-  <pre><code class="language-html">&lt;!DOCTYPE html&gt;
-&lt;html lang="fa"&gt;
-&lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-    &lt;title&gt;آرایش مجازی&lt;/title&gt;
-    
-    &lt;link rel="stylesheet" href="https://cdn.makeup.armogroup.tech/sdk/v3/makeup.min.css"&gt;
-    &lt;style&gt;
-        body { margin: 0; padding: 20px; font-family: Arial; }
-        .container { max-width: 800px; margin: 0 auto; }
-        .controls { padding: 20px; text-align: center; }
-        .btn { background: #007bff; color: white; border: none; 
-               padding: 10px 20px; margin: 5px; border-radius: 5px; cursor: pointer; }
-    &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-    &lt;div class="container"&gt;
-        &lt;h1&gt;آرایش مجازی&lt;/h1&gt;
-        
-        &lt;div id="armo-makeup-view"&gt;&lt;/div&gt;
-        
-        &lt;div class="controls"&gt;
-            &lt;button class="btn" onclick="changeColor('#FF6B9D')"&gt;صورتی&lt;/button&gt;
-            &lt;button class="btn" onclick="changeColor('#DC143C')"&gt;قرمز&lt;/button&gt;
-            &lt;button class="btn" onclick="changePattern('matte')"&gt;مات&lt;/button&gt;
-            &lt;button class="btn" onclick="changePattern('glossy')"&gt;براق&lt;/button&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-
-    &lt;script src="https://cdn.makeup.armogroup.tech/sdk/v3/makeup.min.js"&gt;&lt;/script&gt;
-    &lt;script&gt;
-        let makeupInstance;
-        
-        window.addEventListener('DOMContentLoaded', () =&gt; {
-            // تنظیم Token
-            window.Makeup.setToken('YOUR_TOKEN_HERE');
-            
-            // راه‌اندازی
-            makeupInstance = window.initMakeup({
-                productUid: 'YOUR_PRODUCT_UID',
-                onReady: () =&gt; console.log('آماده!'),
-                onError: (error) =&gt; alert('خطا: ' + error.message)
-            });
-        });
-        
-        function changeColor(color) {
-            makeupInstance?.changeMakeupColor('lips', color);
-        }
-        
-        function changePattern(pattern) {
-            makeupInstance?.changeMakeupPattern('lips', pattern);
-        }
-    &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
-</div>
-
-<div class="info-box">
-  <h3>نکات مهم:</h3>
-  <ul>
-    <li>Token و Product UID را از پنل ARmo دریافت کنید</li>
-    <li>حتماً روی HTTPS تست کنید</li>
-    <li>اجازه دسترسی به دوربین را بدهید</li>
-  </ul>
-</div>
+</section>

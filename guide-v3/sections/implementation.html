@@ -1,0 +1,322 @@
+<section class="implementation">
+  <h2>نحوه پیاده‌سازی</h2>
+
+  <!-- Pure JavaScript -->
+  <div class="implementation-section" id="javascript">
+    <h3>پیاده‌سازی با Pure JavaScript</h3>
+
+    <div class="code-example">
+      <h4>HTML:</h4>
+      <div class="code-block">
+        <pre><code>&lt;!DOCTYPE html&gt;
+    &lt;html&gt;
+    &lt;head&gt;
+        &lt;link rel="stylesheet" href="https://cdn.makeup.armogroup.tech/sdk/v3/makeup.min.css"&gt;
+        &lt;script src="https://cdn.makeup.armogroup.tech/sdk/v3/makeup.min.js"&gt;&lt;/script&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;div id="armo-makeup-view"&gt;&lt;/div&gt;
+        &lt;div id="controls"&gt;
+            &lt;button onclick="changeColor('lips', '#FF69B4')"&gt;رژ لب صورتی&lt;/button&gt;
+            &lt;button onclick="changeColor('eyeshadow', '#8A2BE2')"&gt;سایه چشم بنفش&lt;/button&gt;
+            &lt;button onclick="changePattern('lips', 'matte')"&gt;رژ لب مات&lt;/button&gt;
+            &lt;button onclick="switchToImage()"&gt;حالت تصویر&lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/body&gt;
+    &lt;/html&gt;</code></pre>
+      </div>
+
+      <h4>JavaScript:</h4>
+      <div class="code-block">
+        <pre><code>let makeupInstance;
+    
+    document.addEventListener("DOMContentLoaded", () => {
+        // تنظیم توکن
+        window.Makeup.setToken("YOUR_TOKEN_HERE");
+    
+        // راه‌اندازی SDK
+        makeupInstance = window.initMakeup({
+            productUid: "YOUR_PRODUCT_UID",
+            onReady: handleReady,
+            onError: handleError
+        });
+    });
+    
+    function handleReady() {
+        console.log("SDK آماده است");
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("controls").style.display = "block";
+    }
+    
+    function handleError(error) {
+        console.error("SDK Error:", error);
+        document.getElementById("error-message").textContent = error.message;
+    }
+    
+    function changeColor(type, color) {
+        if (makeupInstance.isFeatureEnabled(type)) {
+            makeupInstance.changeMakeupColor(type, color);
+        } else {
+            alert("این ویژگی در دسترس نیست");
+        }
+    }
+  
+    function changePattern(type, pattern) {
+        if (makeupInstance.isFeatureEnabled(type)) {
+            makeupInstance.changeMakeupPattern(type, pattern);
+        } else {
+            alert("این ویژگی در دسترس نیست");
+        }
+    }
+
+    async function switchToImage() {
+        try {
+            await makeupInstance.switchMode('image');
+            console.log("حالت به تصویر تغییر یافت");
+        } catch (error) {
+            console.error("خطا در تغییر حالت:", error);
+        }
+    }</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- React -->
+  <div class="implementation-section" id="react">
+    <h3>پیاده‌سازی در React</h3>
+
+    <div class="code-example">
+      <h4>نصب:</h4>
+      <p>در فایل <code>public/index.html</code>:</p>
+      <div class="code-block">
+        <pre><code>&lt;link rel="stylesheet" href="https://cdn.makeup.armogroup.tech/sdk/v3/makeup.min.css"&gt;
+    &lt;script src="https://cdn.makeup.armogroup.tech/sdk/v3/makeup.min.js"&gt;&lt;/script&gt;</code></pre>
+      </div>
+
+      <h4>Hook سفارشی:</h4>
+      <div class="code-block">
+        <pre><code>// hooks/useMakeup.js
+import { useState, useEffect, useCallback } from 'react';
+
+export const useMakeup = (token, productUid) => {
+    const [makeup, setMakeup] = useState(null);
+    const [isReady, setIsReady] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        if (!token || !productUid) return;
+
+        const initSDK = async () => {
+            try {
+                // تنظیم Token
+                window.Makeup.setToken(token);
+                
+                // راه‌اندازی
+                const instance = window.initMakeup({
+                    productUid,
+                    onReady: () => setIsReady(true),
+                    onError: setError
+                });
+                
+                setMakeup(instance);
+            } catch (err) {
+                setError(err);
+            }
+        };
+
+        initSDK();
+
+        return () => {
+            makeup?.cleanup();
+        };
+    }, [token, productUid]);
+
+    const changeColor = useCallback((type, color) => {
+        return makeup?.changeMakeupColor(type, color);
+    }, [makeup]);
+
+    const changePattern = useCallback((type, pattern) => {
+        return makeup?.changeMakeupPattern(type, pattern);
+    }, [makeup]);
+
+    const switchMode = useCallback((mode) => {
+        return makeup?.switchMode(mode);
+    }, [makeup]);
+
+    return {
+        makeup,
+        isReady,
+        error,
+        changeColor,
+        changePattern,
+        switchMode
+    };
+};</code></pre>
+      </div>
+
+      <h4>کامپوننت React:</h4>
+      <div class="code-block">
+        <pre><code>import { useMakeup } from './hooks/useMakeup';
+
+function VirtualMakeup() {
+    const { isReady, error, changeColor, changePattern, switchMode } = useMakeup(
+        "YOUR_TOKEN_HERE",
+        "YOUR_PRODUCT_UID"
+    );
+
+    if (error) {
+        return (
+            &lt;div className="error-message"&gt;
+                &lt;h3&gt;خطا در بارگذاری SDK&lt;/h3&gt;
+                &lt;p&gt;{error.message}&lt;/p&gt;
+            &lt;/div&gt;
+        );
+    }
+
+    return (
+        &lt;div className="makeup-container"&gt;
+            {!isReady && (
+                &lt;div className="loading"&gt;در حال بارگذاری...&lt;/div&gt;
+            )}
+            
+            &lt;div id="armo-makeup-view" className={isReady ? 'ready' : 'hidden'} /&gt;
+            
+            {isReady && (
+                &lt;div className="controls"&gt;
+                    &lt;button onClick={() => changeColor('lips', '#FF69B4')}&gt;
+                        رژ لب صورتی
+                    &lt;/button&gt;
+                    &lt;button onClick={() => changeColor('eyeshadow', '#8A2BE2')}&gt;
+                        سایه چشم بنفش
+                    &lt;/button&gt;
+                    &lt;button onClick={() => changePattern('lips', 'matte')}&gt;
+                        رژ لب مات
+                    &lt;/button&gt;
+                    &lt;button onClick={() => switchMode('image')}&gt;
+                        حالت تصویر
+                    &lt;/button&gt;
+                &lt;/div&gt;
+            )}
+        &lt;/div&gt;
+    );
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- React Native -->
+  <div class="implementation-section" id="react-native">
+    <h3>پیاده‌سازی در React Native</h3>
+
+    <div class="code-example">
+      <h4>نصب پیش‌نیازها:</h4>
+      <div class="code-block">
+        <pre><code>npm install react-native-webview</code></pre>
+      </div>
+
+      <h4>کامپوننت React Native:</h4>
+      <div class="code-block">
+        <pre><code>import React, { useState } from 'react';
+    import { View, Text, ActivityIndicator } from 'react-native';
+    import { WebView } from 'react-native-webview';
+    
+    const VirtualMakeup = ({ token, productUid }) => {
+        const [isReady, setIsReady] = useState(false);
+        const [error, setError] = useState(null);
+    
+        const htmlContent = `
+            &lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+                &lt;head&gt;
+                    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+                    &lt;link rel="stylesheet" href="https://cdn.makeup.armogroup.tech/sdk/v3/makeup.min.css"&gt;
+                    &lt;script src="https://cdn.makeup.armogroup.tech/sdk/v3/makeup.min.js"&gt;&lt;/script&gt;
+                &lt;/head&gt;
+                &lt;body style="margin:0;"&gt;
+                    &lt;div id="armo-makeup-view"&gt;&lt;/div&gt;
+                    &lt;div id="controls" style="text-align: center; padding: 10px;"&gt;
+                        &lt;button id="lips-btn" style="margin: 5px; padding: 10px;"&gt;رژ لب صورتی&lt;/button&gt;
+                        &lt;button id="eyeshadow-btn" style="margin: 5px; padding: 10px;"&gt;سایه چشم&lt;/button&gt;
+                        &lt;button id="pattern-btn" style="margin: 5px; padding: 10px;"&gt;مات&lt;/button&gt;
+                        &lt;button id="image-btn" style="margin: 5px; padding: 10px;"&gt;حالت تصویر&lt;/button&gt;
+                    &lt;/div&gt;
+                    &lt;script&gt;
+                        window.Makeup.setToken('${token}');
+                        const makeup = window.initMakeup({
+                            productUid: '${productUid}',
+                            onReady: () => {
+                                window.ReactNativeWebView.postMessage(JSON.stringify({
+                                    type: 'ready'
+                                }));
+                            },
+                            onError: (error) => {
+                                window.ReactNativeWebView.postMessage(JSON.stringify({
+                                    type: 'error',
+                                    message: error.message
+                                }));
+                            }
+                        });
+                        
+                        document.getElementById('lips-btn').addEventListener('click', () => {
+                            makeup.changeMakeupColor('lips', '#FF69B4');
+                        });
+                        document.getElementById('eyeshadow-btn').addEventListener('click', () => {
+                            makeup.changeMakeupColor('eyeshadow', '#8A2BE2');
+                        });
+                        document.getElementById('pattern-btn').addEventListener('click', () => {
+                            makeup.changeMakeupPattern('lips', 'matte');
+                        });
+                        document.getElementById('image-btn').addEventListener('click', async () => {
+                            try {
+                                await makeup.switchMode('image');
+                                window.ReactNativeWebView.postMessage(JSON.stringify({
+                                    type: 'modeChanged',
+                                    mode: 'image'
+                                }));
+                            } catch (error) {
+                                console.error('خطا در تغییر حالت:', error);
+                            }
+                        });
+                    &lt;/script&gt;
+                &lt;/body&gt;
+            &lt;/html&gt;
+        `;
+    
+        const handleMessage = (event) => {
+            const data = JSON.parse(event.nativeEvent.data);
+            if (data.type === 'ready') {
+                setIsReady(true);
+            } else if (data.type === 'error') {
+                setError(data.message);
+            } else if (data.type === 'modeChanged') {
+                console.log(`حالت تغییر یافت به: ${data.mode}`);
+            }
+        };
+    
+        if (error) {
+            return (
+                &lt;View style={styles.errorContainer}&gt;
+                    &lt;Text style={styles.errorText}&gt;{error}&lt;/Text&gt;
+                &lt;/View&gt;
+            );
+        }
+    
+        return (
+            &lt;View style={styles.container}&gt;
+                {!isReady && (
+                    &lt;ActivityIndicator size="large" color="#0000ff" /&gt;
+                )}
+                &lt;WebView
+                    source={{ html: htmlContent }}
+                    onMessage={handleMessage}
+                    style={styles.webview}
+                    allowsInlineMediaPlayback
+                    mediaPlaybackRequiresUserAction={false}
+                /&gt;
+            &lt;/View&gt;
+        );
+    };</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
