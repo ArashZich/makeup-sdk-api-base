@@ -30,7 +30,7 @@ import "../ui/styles/index.css";
  * Main Makeup class for virtual makeup SDK
  */
 class Makeup {
-  static version = "v2";
+  static version = "v3";
 
   static STATUS = {
     INITIALIZING: "initializing",

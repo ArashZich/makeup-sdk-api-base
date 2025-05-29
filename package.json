@@ -1,6 +1,6 @@
 {
   "name": "makeup",
-  "version": "0.2.1",
+  "version": "3.0.0",
   "main": "dist/makeup.js",
   "scripts": {
     "start": "webpack serve --mode development --open",
@@ -8,9 +8,9 @@
     "build:dev": "webpack --mode development",
     "build:analyze": "webpack --mode production --env analyze=true",
     "analyze:dev": "webpack --mode development --env analyze=true",
-    "serve": "webpack serve --mode development --port 3106",
-    "dev": "npm run build:dev && serve -s dist -p 3106",
-    "production": "npm run build && serve -s dist -p 3106",
+    "serve": "webpack serve --mode development --port 3109",
+    "dev": "npm run build:dev && serve -s dist -p 3109",
+    "production": "npm run build && serve -s dist -p 3109",
     "clear-cache": "rm -rf node_modules/.cache"
   },
   "keywords": [],

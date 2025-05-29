@@ -11,7 +11,7 @@ const BundleAnalyzerPlugin =
 
 module.exports = (env, argv) => {
   const isDevelopment = argv.mode === "development";
-  const version = env.VERSION || "v2";
+  const version = env.VERSION || "v3";
 
   return {
     mode: isDevelopment ? "development" : "production",
