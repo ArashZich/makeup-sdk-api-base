@@ -1,5 +1,6 @@
 // src/utils/colorExtractor.js
 import ColorThief from "colorthief";
+import { log, warn, fatal } from "./logger";
 
 /**
  * تبدیل مقادیر RGB به فرمت هگز
@@ -20,7 +21,7 @@ export function rgbToHex(r, g, b) {
 export function extractDominantColor(imageUrl) {
   return new Promise((resolve, reject) => {
     try {
-      console.log("شروع استخراج رنگ پررنگ از:", imageUrl);
+      log("شروع استخراج رنگ پررنگ از:", imageUrl);
 
       // ایجاد تصویر جدید
       const img = new Image();
@@ -28,7 +29,7 @@ export function extractDominantColor(imageUrl) {
 
       // اضافه کردن مهلت زمانی برای بارگذاری تصویر
       const loadTimeout = setTimeout(() => {
-        console.warn("مهلت بارگذاری تصویر تمام شد، استفاده از رنگ پیش‌فرض");
+        warn("مهلت بارگذاری تصویر تمام شد، استفاده از رنگ پیش‌فرض");
         resolve("#808080");
       }, 10000);
 
@@ -36,16 +37,11 @@ export function extractDominantColor(imageUrl) {
         clearTimeout(loadTimeout);
 
         try {
-          console.log(
-            "تصویر با موفقیت لود شد. ابعاد:",
-            img.width,
-            "x",
-            img.height
-          );
+          log("تصویر با موفقیت لود شد. ابعاد:", img.width, "x", img.height);
 
           // بررسی ابعاد تصویر
           if (img.width <= 1 || img.height <= 1) {
-            console.warn("تصویر خیلی کوچک است، استفاده از رنگ پیش‌فرض");
+            warn("تصویر خیلی کوچک است، استفاده از رنگ پیش‌فرض");
             resolve("#808080");
             return;
           }
@@ -82,10 +78,7 @@ export function extractDominantColor(imageUrl) {
             colorImage.onload = function () {
               try {
                 const dominantColor = colorThief.getColor(colorImage);
-                console.log(
-                  "ColorThief رنگ غالب پررنگ را پیدا کرد:",
-                  dominantColor
-                );
+                log("ColorThief رنگ غالب پررنگ را پیدا کرد:", dominantColor);
 
                 // افزایش اشباع رنگ
                 const saturatedColor = increaseSaturation(
@@ -100,10 +93,10 @@ export function extractDominantColor(imageUrl) {
                   saturatedColor[1],
                   saturatedColor[2]
                 );
-                console.log("رنگ نهایی بهبود یافته:", hexColor);
+                log("رنگ نهایی بهبود یافته:", hexColor);
                 resolve(hexColor);
               } catch (error) {
-                console.warn("خطا در ColorThief بهبود یافته:", error);
+                warn("خطا در ColorThief بهبود یافته:", error);
                 fallbackColorExtraction();
               }
             };
@@ -111,7 +104,7 @@ export function extractDominantColor(imageUrl) {
             colorImage.onerror = fallbackColorExtraction;
             return;
           } catch (colorThiefError) {
-            console.warn(
+            warn(
               "ColorThief با خطا مواجه شد، استفاده از روش جایگزین:",
               colorThiefError
             );
@@ -129,7 +122,7 @@ export function extractDominantColor(imageUrl) {
             );
             const data = imageData.data;
 
-            console.log("استفاده از روش جایگزین برای استخراج رنگ پررنگ");
+            log("استفاده از روش جایگزین برای استخراج رنگ پررنگ");
 
             // بافرهای رنگ با وزن‌دهی بهتر
             const rgbColors = [];
@@ -234,7 +227,7 @@ export function extractDominantColor(imageUrl) {
                 saturatedColor[1],
                 saturatedColor[2]
               );
-              console.log("رنگ پررنگ یافت شده:", hexColor);
+              log("رنگ پررنگ یافت شده:", hexColor);
               resolve(hexColor);
             } else if (rgbColors.length > 0) {
               // روش سنتی k-means اگر روش وزن‌دهی شکست خورد
@@ -284,33 +277,33 @@ export function extractDominantColor(imageUrl) {
                   enhancedColor[1],
                   enhancedColor[2]
                 );
-                console.log("رنگ غالب تقویت شده:", hexColor);
+                log("رنگ غالب تقویت شده:", hexColor);
                 resolve(hexColor);
               } else {
-                console.warn("رنگ غالب یافت نشد، استفاده از رنگ پیش‌فرض");
+                warn("رنگ غالب یافت نشد، استفاده از رنگ پیش‌فرض");
                 resolve("#808080");
               }
             } else {
-              console.warn("هیچ رنگ مناسبی یافت نشد، استفاده از رنگ پیش‌فرض");
+              warn("هیچ رنگ مناسبی یافت نشد، استفاده از رنگ پیش‌فرض");
               resolve("#808080");
             }
           }
         } catch (err) {
-          console.error("خطا در پردازش تصویر:", err);
+          fatal("خطا در پردازش تصویر:", err);
           resolve("#808080");
         }
       };
 
       img.onerror = function (err) {
         clearTimeout(loadTimeout);
-        console.error("خطا در بارگذاری تصویر:", err);
+        fatal("خطا در بارگذاری تصویر:", err);
         resolve("#808080");
       };
 
       // شروع بارگذاری تصویر
       img.src = imageUrl;
     } catch (error) {
-      console.error("خطای غیرمنتظره:", error);
+      fatal("خطای غیرمنتظره:", error);
       resolve("#808080");
     }
   });
@@ -493,36 +486,32 @@ export async function processColorsArray(colorsArray) {
     return [];
   }
 
-  console.log("شروع پردازش آرایه رنگ‌ها:", colorsArray);
+  log("شروع پردازش آرایه رنگ‌ها:", colorsArray);
   const processedColors = [];
 
   // پردازش هر آیتم در آرایه
   for (let i = 0; i < colorsArray.length; i++) {
     const colorItem = { ...colorsArray[i] };
-    console.log(`پردازش آیتم ${i + 1}/${colorsArray.length}:`, colorItem);
+    log(`پردازش آیتم ${i + 1}/${colorsArray.length}:`, colorItem);
 
     // اگر url وجود دارد اما color وجود ندارد
     if (colorItem.url && (!colorItem.color || colorItem.color === "")) {
-      console.log(
-        `آیتم ${colorItem.code} دارای url بدون رنگ است، استخراج رنگ...`
-      );
+      log(`آیتم ${colorItem.code} دارای url بدون رنگ است، استخراج رنگ...`);
       try {
         // استخراج رنگ از تصویر
         colorItem.color = await extractDominantColor(colorItem.url);
-        console.log(
-          `رنگ استخراج شده برای ${colorItem.code}: ${colorItem.color}`
-        );
+        log(`رنگ استخراج شده برای ${colorItem.code}: ${colorItem.color}`);
       } catch (error) {
-        console.error(`خطا در استخراج رنگ برای ${colorItem.code}:`, error);
+        fatal(`خطا در استخراج رنگ برای ${colorItem.code}:`, error);
         colorItem.color = "#808080"; // رنگ پیش‌فرض خاکستری
       }
     } else {
-      console.log(`آیتم ${colorItem.code} نیازی به استخراج رنگ ندارد.`);
+      log(`آیتم ${colorItem.code} نیازی به استخراج رنگ ندارد.`);
     }
 
     processedColors.push(colorItem);
   }
 
-  console.log("تمام آیتم‌ها پردازش شدند:", processedColors);
+  log("تمام آیتم‌ها پردازش شدند:", processedColors);
   return processedColors;
 }

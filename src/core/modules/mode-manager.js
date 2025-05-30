@@ -7,6 +7,7 @@ import {
   changeMakeupColor as handleMakeupColorChange,
   setMakeupPattern as handleMakeupPatternChange,
 } from "../methods/makeupHandle";
+import { log, warn, fatal } from "../../utils/logger";
 
 /**
  * کلاس مدیریت حالت‌های SDK
@@ -63,7 +64,7 @@ export class ModeManager {
    */
   changeMakeupColor(type, color, code = null) {
     if (!type || !color) {
-      console.warn("نوع یا رنگ آرایش برای تغییر مشخص نشده است.");
+      warn("نوع یا رنگ آرایش برای تغییر مشخص نشده است.");
       return false;
     }
 
@@ -94,7 +95,7 @@ export class ModeManager {
    */
   changeMakeupPattern(type, pattern) {
     if (!type || !pattern) {
-      console.warn("نوع یا pattern آرایش برای تغییر مشخص نشده است.");
+      warn("نوع یا pattern آرایش برای تغییر مشخص نشده است.");
       return false;
     }
 
@@ -155,7 +156,7 @@ export class ModeManager {
    */
   async switchMode(newMode) {
     try {
-      console.log(`Switching mode from ${this.options.mode} to ${newMode}`);
+      log(`Switching mode from ${this.options.mode} to ${newMode}`);
 
       if (newMode === this.options.mode) return true;
 
@@ -188,7 +189,7 @@ export class ModeManager {
 
       return true;
     } catch (error) {
-      console.error(`Error switching to ${newMode} mode:`, error);
+      fatal(`Error switching to ${newMode} mode:`, error);
       return false;
     }
   }
@@ -239,7 +240,7 @@ export class ModeManager {
    */
   async initCamera() {
     try {
-      console.log("Initializing camera mode...");
+      log("Initializing camera mode...");
 
       // نمایش المنت ویدیو
       if (this.videoElement) {
@@ -269,10 +270,10 @@ export class ModeManager {
       this.faceMeshInstance = faceMeshResult.faceMesh;
       this.cameraStream = faceMeshResult.stream;
 
-      console.log("Camera mode initialized successfully");
+      log("Camera mode initialized successfully");
       return true;
     } catch (error) {
-      console.error("Error initializing camera:", error);
+      fatal("Error initializing camera:", error);
       this.uiManager.showErrorMessage(
         "خطا",
         "مشکلی در راه‌اندازی دوربین رخ داد"
@@ -287,7 +288,7 @@ export class ModeManager {
    */
   async initImageMode() {
     try {
-      console.log("Initializing image mode...");
+      log("Initializing image mode...");
 
       const container = document.querySelector(".armo-sdk-container");
       if (!container) {
@@ -324,7 +325,7 @@ export class ModeManager {
 
       // ایجاد یا بازیابی imageManager
       if (!this.imageManager) {
-        console.log("Creating new ImageManager...");
+        log("Creating new ImageManager...");
         // ✅ رفع مشکل: استفاده از this.comparisonManager به جای this.options.comparisonManager
         this.imageManager = new ImageManager(
           this.canvasElement,
@@ -335,14 +336,14 @@ export class ModeManager {
 
       // نمایش رابط کاربری آپلود
       const uploadManager = initImageUpload(container, async (imageData) => {
-        console.log("Image selected, processing...");
+        log("Image selected, processing...");
         this.uiManager.showLoadingWithMessage("در حال پردازش تصویر...");
 
         try {
           const success = await this.imageManager.loadImage(imageData);
 
           if (success) {
-            console.log("Image loaded successfully");
+            log("Image loaded successfully");
             // اعمال تنظیمات فعلی آرایش روی عکس
             if (this.options.currentMakeupType && this.options.currentColor) {
               this.imageManager.updateMakeup(
@@ -362,7 +363,7 @@ export class ModeManager {
             );
           }
         } catch (error) {
-          console.error("Error processing image:", error);
+          fatal("Error processing image:", error);
           this.uiManager.showErrorMessage(
             "خطا",
             "مشکلی در پردازش تصویر رخ داد"
@@ -374,14 +375,14 @@ export class ModeManager {
 
       // اضافه کردن callback برای زمانی که کاربر مدال را می‌بندد
       uploadManager.show(() => {
-        console.log("Upload modal closed, switching back to camera...");
+        log("Upload modal closed, switching back to camera...");
         this.switchMode("camera");
       });
 
-      console.log("Image mode initialized successfully");
+      log("Image mode initialized successfully");
       return true;
     } catch (error) {
-      console.error("Error initializing image mode:", error);
+      fatal("Error initializing image mode:", error);
       this.uiManager.showErrorMessage(
         "خطا",
         `مشکلی در راه‌اندازی حالت تصویر رخ داد: ${error.message}`
@@ -402,7 +403,7 @@ export class ModeManager {
         this.videoElement.muted = true;
       }
     } catch (error) {
-      console.error("Error setting up video:", error);
+      fatal("Error setting up video:", error);
       throw error;
     }
   }
@@ -411,7 +412,7 @@ export class ModeManager {
    * پاکسازی منابع
    */
   cleanup() {
-    console.log("Cleaning up ModeManager...");
+    log("Cleaning up ModeManager...");
     this._cleanupCamera();
 
     if (this.imageManager) {

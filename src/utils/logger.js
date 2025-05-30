@@ -23,6 +23,7 @@ class Logger {
       info: "#0288d1", // آبی روشن
       warn: "#f57f17", // زرد
       error: "#d32f2f", // قرمز
+      fatal: "#b71c1c", // قرمز تیره
       debug: "#7b1fa2", // بنفش
       success: "#388e3c", // سبز
       trace: "#455a64", // خاکستری
@@ -81,6 +82,14 @@ class Logger {
   error(message, ...args) {
     if (!this.isEnabled()) return;
     console.error(...this._formatMessage("error", message, ...args));
+  }
+
+  /**
+   * خطای جدی
+   */
+  fatal(message, ...args) {
+    if (!this.isEnabled()) return;
+    console.error(...this._formatMessage("fatal", "💀 " + message, ...args));
   }
 
   /**
@@ -265,6 +274,7 @@ export const assert = logger.assert.bind(logger);
 export const verbose = logger.verbose.bind(logger);
 export const performance = logger.performance.bind(logger);
 export const pretty = logger.pretty.bind(logger);
+export const fatal = logger.fatal.bind(logger);
 
 // Export کردن logger class
 export default logger;
