@@ -121,7 +121,7 @@ class Makeup {
       // Store important info
       this.isPremium = validationResult.isPremium;
       this.tokenInfo = validationResult.tokenInfo;
-      this.mediaFeatures = validationResult.mediaFeatures;
+      this.mediaFeatures = validationResult.tokenInfo.mediaFeatures; // ✅ رفع مشکل: مرجع‌دهی درست
 
       // Create managers with the validated data
       this.featureManager = new FeatureManager(validationResult.tokenInfo);
