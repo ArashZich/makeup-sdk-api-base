@@ -1,5 +1,6 @@
 /*! _messages.css */
 
+/* Error Messages */
 .armo-sdk-error-message {
   position: fixed;
   top: 50%;
@@ -19,8 +20,10 @@
   min-width: 280px;
   max-width: 90%;
   animation: messageSlideIn 0.3s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Warning Messages */
 .armo-sdk-warning-message {
   position: absolute;
   top: 50%;
@@ -42,6 +45,75 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Success Messages */
+.armo-sdk-success-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(40, 167, 69, 0.95);
+  color: white;
+  padding: 20px 30px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  z-index: 10000;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  direction: rtl;
+  min-width: 280px;
+  max-width: 90%;
+  animation: messageSlideIn 0.3s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Info Messages */
+.armo-sdk-info-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(23, 162, 184, 0.95);
+  color: white;
+  padding: 20px 30px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  z-index: 10000;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  direction: rtl;
+  min-width: 280px;
+  max-width: 90%;
+  animation: messageSlideIn 0.3s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Confirm Messages */
+.armo-sdk-confirm-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.95);
+  color: white;
+  padding: 32px;
+  border-radius: 20px;
+  font-size: 16px;
+  text-align: center;
+  z-index: 10001;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  direction: rtl;
+  min-width: 320px;
+  max-width: 90%;
+  animation: messageSlideIn 0.4s ease-out;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Message Title */
 .armo-sdk-message-title {
   font-size: 18px;
   font-weight: 600;
@@ -49,27 +121,199 @@
   color: white;
 }
 
+/* Message Content */
 .armo-sdk-message-content {
   font-size: 14px;
   line-height: 1.5;
   color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 20px;
 }
 
+/* Message Buttons Container */
+.armo-sdk-message-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Message Button */
 .armo-sdk-message-button {
-  margin-top: 16px;
-  padding: 8px 24px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.2);
+  padding: 10px 24px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
   color: white;
   font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-width: 80px;
+  font-family: "IRANSans", "PublicSans", sans-serif;
 }
 
 .armo-sdk-message-button:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+.armo-sdk-message-button:active {
+  transform: translateY(0);
+}
+
+/* Confirm Button */
+.armo-sdk-message-button.confirm {
+  background: rgba(40, 167, 69, 0.8);
+  border-color: rgba(40, 167, 69, 1);
+}
+
+.armo-sdk-message-button.confirm:hover {
+  background: rgba(40, 167, 69, 1);
+  border-color: rgba(40, 167, 69, 1);
+}
+
+/* Cancel Button */
+.armo-sdk-message-button.cancel {
+  background: rgba(220, 53, 69, 0.8);
+  border-color: rgba(220, 53, 69, 1);
+}
+
+.armo-sdk-message-button.cancel:hover {
+  background: rgba(220, 53, 69, 1);
+  border-color: rgba(220, 53, 69, 1);
+}
+
+/* Progress Container */
+.armo-sdk-progress-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 12px;
+  z-index: 9999;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 200px;
+  animation: messageSlideIn 0.3s ease-out;
+}
+
+/* Progress Bar */
+.armo-sdk-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.armo-sdk-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4caf50, #8bc34a);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.armo-sdk-progress-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: progressShine 2s infinite;
+}
+
+/* Progress Text */
+.armo-sdk-progress-text {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Loading Overlay */
+.armo-sdk-message-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 9998;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Close Button */
+.armo-sdk-message-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.armo-sdk-message-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Icon in messages */
+.armo-sdk-message-icon {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.armo-sdk-error-message .armo-sdk-message-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.armo-sdk-success-message .armo-sdk-message-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.armo-sdk-warning-message .armo-sdk-message-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.armo-sdk-info-message .armo-sdk-message-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+/* Animations */
 @keyframes messageSlideIn {
   from {
     opacity: 0;
@@ -89,5 +333,149 @@
   to {
     opacity: 0;
     transform: translate(-50%, -55%);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes progressShine {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Auto-hide animation */
+.armo-sdk-message-auto-hide {
+  animation: messageSlideOut 0.3s ease-in 2.7s forwards;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .armo-sdk-error-message,
+  .armo-sdk-warning-message,
+  .armo-sdk-success-message,
+  .armo-sdk-info-message,
+  .armo-sdk-confirm-message {
+    padding: 20px 24px;
+    margin: 0 16px;
+    max-width: calc(100% - 32px);
+    min-width: 260px;
+  }
+
+  .armo-sdk-message-title {
+    font-size: 16px;
+  }
+
+  .armo-sdk-message-content {
+    font-size: 13px;
+  }
+
+  .armo-sdk-message-button {
+    padding: 8px 16px;
+    font-size: 13px;
+    min-width: 70px;
+  }
+
+  .armo-sdk-progress-container {
+    margin: 0 16px;
+    min-width: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .armo-sdk-error-message,
+  .armo-sdk-warning-message,
+  .armo-sdk-success-message,
+  .armo-sdk-info-message,
+  .armo-sdk-confirm-message {
+    padding: 16px 20px;
+    margin: 0 12px;
+    max-width: calc(100% - 24px);
+    min-width: 240px;
+  }
+
+  .armo-sdk-message-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .armo-sdk-message-button {
+    width: 100%;
+  }
+
+  .armo-sdk-progress-container {
+    margin: 0 12px;
+    min-width: 160px;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .armo-sdk-error-message {
+    background: rgba(239, 68, 68, 0.95);
+  }
+
+  .armo-sdk-warning-message {
+    background: rgba(245, 158, 11, 0.95);
+  }
+
+  .armo-sdk-success-message {
+    background: rgba(34, 197, 94, 0.95);
+  }
+
+  .armo-sdk-info-message {
+    background: rgba(59, 130, 246, 0.95);
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .armo-sdk-error-message,
+  .armo-sdk-warning-message,
+  .armo-sdk-success-message,
+  .armo-sdk-info-message,
+  .armo-sdk-confirm-message {
+    border-width: 3px;
+    border-style: solid;
+  }
+
+  .armo-sdk-error-message {
+    border-color: #dc3545;
+  }
+
+  .armo-sdk-warning-message {
+    border-color: #ffc107;
+  }
+
+  .armo-sdk-success-message {
+    border-color: #28a745;
+  }
+
+  .armo-sdk-info-message {
+    border-color: #17a2b8;
+  }
+
+  .armo-sdk-confirm-message {
+    border-color: #ffffff;
   }
 }

@@ -17,76 +17,168 @@
   border-radius: 32px;
   padding: 12px;
   background: rgba(0, 0, 0, 0.5);
-  border: none;
+  border: 2px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(8px);
+  position: relative;
+  overflow: hidden;
 }
 
+/* Hover Effect */
 .armo-sdk-camera-control-button:hover {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.7);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
+/* Active State */
+.armo-sdk-camera-control-button.active {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+  transform: scale(1.02);
+}
+
+/* Icon Styles */
 .armo-sdk-camera-control-button img {
   width: 100%;
   height: 100%;
   filter: brightness(0) invert(1);
   transition: all 0.3s ease;
+  object-fit: contain;
 }
 
-.armo-sdk-camera-control-button.active {
-  background: #ffffff;
-}
-
+/* Active Icon */
 .armo-sdk-camera-control-button.active img {
-  filter: brightness(0); /* این رو تغییر دادم از none به brightness(0) */
+  filter: brightness(0);
 }
 
+/* Button Loading State */
+.armo-sdk-camera-control-button.loading {
+  pointer-events: none;
+}
+
+.armo-sdk-camera-control-button.loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.armo-sdk-camera-control-button.loading img {
+  opacity: 0;
+}
+
+/* Disabled State */
+.armo-sdk-camera-control-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Capture Button */
 .armo-sdk-capture-button {
   position: absolute;
   right: 24px;
   bottom: 24px;
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   border-radius: 32px;
   padding: 0;
-  background: rgba(0, 0, 0, 0.5);
-  border: none;
+  background: rgba(255, 0, 0, 0.8);
+  border: 3px solid rgba(255, 255, 255, 0.9);
   cursor: pointer;
   transition: all 0.3s ease;
   display: none;
   align-items: center;
   justify-content: center;
   animation: pulseAndShake 3s ease-in-out infinite;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(255, 0, 0, 0.3);
 }
 
 .armo-sdk-capture-button img {
-  width: 100%;
-  height: 100%;
+  width: 32px;
+  height: 32px;
   filter: brightness(0) invert(1);
   padding: 0;
   margin: 0;
-  object-fit: cover;
-  border-radius: 32px;
+  object-fit: contain;
 }
 
 .armo-sdk-capture-button:hover {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(255, 0, 0, 1);
+  border-color: #ffffff;
   animation: none;
-  transform: scale(1.05);
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(255, 0, 0, 0.5);
 }
 
 .armo-sdk-capture-button:active {
   transform: scale(0.95);
 }
 
+/* Show capture button when image mode is active */
+.armo-sdk-camera-control-button[data-control="image"].active
+  ~ .armo-sdk-capture-button {
+  display: flex;
+}
+
+/* Tooltip */
+.armo-sdk-camera-control-button::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  right: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+}
+
+.armo-sdk-camera-control-button::after {
+  content: "";
+  position: absolute;
+  right: calc(100% + 6px);
+  top: 50%;
+  transform: translateY(-50%);
+  border: 3px solid transparent;
+  border-left-color: rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.armo-sdk-camera-control-button:hover::before,
+.armo-sdk-camera-control-button:hover::after {
+  opacity: 1;
+}
+
+/* Animations */
 @keyframes pulseAndShake {
   0% {
     transform: scale(1);
   }
-
   /* نبض اول */
   15% {
     transform: scale(1.1);
@@ -94,7 +186,6 @@
   20% {
     transform: scale(1);
   }
-
   /* تکان آرام */
   40% {
     transform: translateX(-3px);
@@ -105,7 +196,6 @@
   50% {
     transform: translateX(0);
   }
-
   /* نبض دوم */
   70% {
     transform: scale(1.1);
@@ -113,8 +203,238 @@
   75% {
     transform: scale(1);
   }
-
   100% {
     transform: scale(1);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes buttonPress {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Success Animation */
+.armo-sdk-camera-control-button.success {
+  animation: buttonPress 0.2s ease;
+  background: rgba(40, 167, 69, 0.8);
+}
+
+/* Error Animation */
+.armo-sdk-camera-control-button.error {
+  animation: buttonPress 0.2s ease;
+  background: rgba(220, 53, 69, 0.8);
+}
+
+/* Badge/Notification */
+.armo-sdk-camera-control-button .badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 16px;
+  height: 16px;
+  background: #ff4444;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: white;
+  font-weight: bold;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+}
+
+/* Responsive Design */
+
+/* Tablets */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .armo-sdk-camera-controls {
+    right: 20px;
+    gap: 14px;
+  }
+
+  .armo-sdk-camera-control-button {
+    width: 50px;
+    height: 50px;
+    border-radius: 28px;
+    padding: 10px;
+  }
+
+  .armo-sdk-capture-button {
+    right: 20px;
+    bottom: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 28px;
+  }
+
+  .armo-sdk-capture-button img {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Large Mobile */
+@media (max-width: 768px) and (min-width: 481px) {
+  .armo-sdk-camera-controls {
+    right: 16px;
+    gap: 12px;
+  }
+
+  .armo-sdk-camera-control-button {
+    width: 48px;
+    height: 48px;
+    border-radius: 26px;
+    padding: 10px;
+  }
+
+  .armo-sdk-capture-button {
+    right: 16px;
+    bottom: 16px;
+    width: 52px;
+    height: 52px;
+    border-radius: 26px;
+  }
+
+  .armo-sdk-capture-button img {
+    width: 26px;
+    height: 26px;
+  }
+
+  /* Hide tooltips on mobile */
+  .armo-sdk-camera-control-button::before,
+  .armo-sdk-camera-control-button::after {
+    display: none;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .armo-sdk-camera-controls {
+    right: 12px;
+    gap: 10px;
+  }
+
+  .armo-sdk-camera-control-button {
+    width: 44px;
+    height: 44px;
+    border-radius: 24px;
+    padding: 8px;
+  }
+
+  .armo-sdk-capture-button {
+    right: 12px;
+    bottom: 12px;
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
+  }
+
+  .armo-sdk-capture-button img {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Very Small Mobile */
+@media (max-width: 360px) {
+  .armo-sdk-camera-controls {
+    right: 8px;
+    gap: 8px;
+  }
+
+  .armo-sdk-camera-control-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 22px;
+    padding: 6px;
+  }
+
+  .armo-sdk-capture-button {
+    right: 8px;
+    bottom: 8px;
+    width: 44px;
+    height: 44px;
+    border-radius: 22px;
+  }
+
+  .armo-sdk-capture-button img {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* Landscape Mode */
+@media (max-width: 920px) and (orientation: landscape) {
+  .armo-sdk-camera-controls {
+    right: 12px;
+    top: 20px;
+    transform: none;
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .armo-sdk-camera-control-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 22px;
+    padding: 6px;
+  }
+
+  .armo-sdk-capture-button {
+    right: 12px;
+    bottom: 12px;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .armo-sdk-camera-control-button {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .armo-sdk-camera-control-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .armo-sdk-camera-control-button.active {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(255, 255, 255, 1);
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .armo-sdk-camera-control-button {
+    border-width: 3px;
+    border-color: #ffffff;
+  }
+
+  .armo-sdk-camera-control-button.active {
+    background: #ffffff;
+    border-color: #000000;
+  }
+
+  .armo-sdk-camera-control-button.active img {
+    filter: brightness(0);
   }
 }

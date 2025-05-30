@@ -121,7 +121,7 @@ class Makeup {
       // Store important info
       this.isPremium = validationResult.isPremium;
       this.tokenInfo = validationResult.tokenInfo;
-      this.mediaFeatures = validationResult.mediaFeatures;
+      this.mediaFeatures = validationResult.tokenInfo.mediaFeatures; // ✅ رفع مشکل: مرجع‌دهی درست
 
       // Create managers with the validated data
       this.featureManager = new FeatureManager(validationResult.tokenInfo);
@@ -292,6 +292,133 @@ class Makeup {
 
     // Initialize camera controls
     initCameraControls(this.mediaFeatures);
+
+    // ✅ اضافه کردن Event listener برای camera controls
+    this._setupControlEventListeners();
+  }
+
+  /**
+   * تنظیم event listener های کنترل دوربین
+   * @private
+   */
+  _setupControlEventListeners() {
+    // Bind کردن handler برای استفاده در cleanup
+    this._boundControlHandler = (event) => {
+      this._handleControlClick(event.detail.control, event.detail.active);
+    };
+
+    // Event listener برای دکمه‌های کنترل دوربین
+    document.addEventListener("armoControlClick", this._boundControlHandler);
+  }
+
+  /**
+   * مدیریت کلیک روی دکمه‌های کنترل
+   * @param {string} control - نوع کنترل (compare, image, settings)
+   * @param {boolean} isActive - وضعیت فعال/غیرفعال
+   * @private
+   */
+  async _handleControlClick(control, isActive) {
+    try {
+      if (control === "compare") {
+        // مدیریت دکمه before/after comparison
+        await this._handleCompareControl(isActive);
+      } else if (control === "image") {
+        // مدیریت دکمه image upload
+        await this._handleImageControl(isActive);
+      } else if (control === "settings") {
+        // مدیریت دکمه settings (در آینده)
+        await this._handleSettingsControl(isActive);
+      }
+    } catch (error) {
+      console.error(`Error handling control ${control}:`, error);
+      this.uiManager.showErrorMessage(
+        "خطا در کنترل",
+        `مشکلی در ${control} رخ داده است`
+      );
+    }
+  }
+
+  /**
+   * مدیریت دکمه comparison (before/after)
+   * @param {boolean} isActive - وضعیت فعال/غیرفعال
+   * @private
+   */
+  async _handleCompareControl(isActive) {
+    if (!this.comparisonManager) {
+      this.uiManager.showErrorMessage("خطا", "قابلیت مقایسه در دسترس نیست");
+      return;
+    }
+
+    if (isActive) {
+      // فعال کردن حالت مقایسه
+      this.comparisonManager.enable();
+      this.uiManager.showInfoMessage(
+        "حالت مقایسه فعال شد. خط را حرکت دهید",
+        3000
+      );
+    } else {
+      // غیرفعال کردن حالت مقایسه
+      this.comparisonManager.disable();
+      this.uiManager.showInfoMessage("حالت مقایسه غیرفعال شد", 2000);
+    }
+  }
+
+  /**
+   * مدیریت دکمه image upload
+   * @param {boolean} isActive - وضعیت فعال/غیرفعال
+   * @private
+   */
+  async _handleImageControl(isActive) {
+    if (isActive) {
+      // تغییر به حالت image
+      const success = await this.switchMode("image");
+      if (!success) {
+        this.uiManager.showErrorMessage(
+          "خطا",
+          "مشکلی در تغییر به حالت تصویر رخ داد"
+        );
+        // غیرفعال کردن دکمه در صورت خطا
+        this._deactivateControlButton("image");
+      }
+    } else {
+      // برگشت به حالت camera
+      const success = await this.switchMode("camera");
+      if (!success) {
+        this.uiManager.showErrorMessage(
+          "خطا",
+          "مشکلی در برگشت به حالت دوربین رخ داد"
+        );
+      }
+    }
+  }
+
+  /**
+   * مدیریت دکمه settings (برای آینده)
+   * @param {boolean} isActive - وضعیت فعال/غیرفعال
+   * @private
+   */
+  async _handleSettingsControl(isActive) {
+    if (isActive) {
+      // فعلاً فقط پیام نمایش می‌دهیم
+      this.uiManager.showInfoMessage(
+        "تنظیمات در نسخه‌های آینده اضافه خواهد شد",
+        3000
+      );
+      // غیرفعال کردن دکمه چون هنوز پیاده‌سازی نشده
+      this._deactivateControlButton("settings");
+    }
+  }
+
+  /**
+   * غیرفعال کردن دستی یک دکمه کنترل
+   * @param {string} controlName - نام کنترل
+   * @private
+   */
+  _deactivateControlButton(controlName) {
+    const button = document.querySelector(`[data-control="${controlName}"]`);
+    if (button) {
+      button.classList.remove("active");
+    }
   }
 
   /**
@@ -546,10 +673,27 @@ class Makeup {
   }
 
   /**
+   * پاکسازی event listener ها
+   * @private
+   */
+  _cleanupEventListeners() {
+    // حذف event listener های مربوط به controls
+    if (this._boundControlHandler) {
+      document.removeEventListener(
+        "armoControlClick",
+        this._boundControlHandler
+      );
+    }
+  }
+
+  /**
    * Clean up resources
    */
   cleanup() {
     this.status = Makeup.STATUS.CLEANUP;
+
+    // پاکسازی event listeners
+    this._cleanupEventListeners();
 
     if (this.modeManager) this.modeManager.cleanup();
     if (this.lightDetector) this.lightDetector.cleanup();

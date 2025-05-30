@@ -65,17 +65,13 @@ export class ApiHandler {
         data.productInfo = this._mapProductInfoToSDKFormat(data.productInfo);
       }
 
+      // ✅ رفع مشکل: حذف mediaFeatures جداگانه چون در tokenInfo موجود است
       return {
         isValid: data.tokenInfo?.isValid || false,
         isPremium: data.tokenInfo?.isPremium || false,
         projectType: data.tokenInfo?.projectType || null,
         tokenInfo: data.tokenInfo || {},
         productInfo: data.productInfo || null,
-        mediaFeatures: data.tokenInfo?.mediaFeatures || {
-          allowedSources: [],
-          allowedViews: [],
-          comparisonModes: [],
-        },
         message: data.message || null,
       };
     } catch (error) {
@@ -104,8 +100,6 @@ export class ApiHandler {
       url: apiColor.imageUrl, // اگر imageUrl در پاسخ API برای رنگ‌ها وجود دارد
       feature: apiColor.feature || productInfo.type, // ویژگی مرتبط
     }));
-
-    console.log(colors, "LOPPPPP");
 
     // تبدیل پترن‌های محصول به فرمت مورد نیاز SDK
     // API response: { "name": "براق", "code": "GLOSSY", "imageUrl": "..." }

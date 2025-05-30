@@ -25,7 +25,8 @@ export class ModeManager {
 
     this.featureManager = managers.featureManager;
     this.uiManager = managers.uiManager;
-    this.productManager = managers.productManager; // اضافه کردن productManager
+    this.productManager = managers.productManager;
+    this.comparisonManager = managers.comparisonManager; // ✅ اضافه کردن comparisonManager
 
     if (managers.comparisonManager && elements.canvasElement) {
       this.imageManager = new ImageManager(
@@ -150,35 +151,45 @@ export class ModeManager {
   /**
    * تغییر حالت SDK (دوربین/تصویر)
    * @param {string} newMode - حالت جدید
-   * @returns {Promise<void>}
+   * @returns {Promise<boolean>}
    */
   async switchMode(newMode) {
-    if (newMode === this.options.mode) return;
+    try {
+      console.log(`Switching mode from ${this.options.mode} to ${newMode}`);
 
-    // cleanup حالت قبلی
-    if (this.options.mode === "camera") {
+      if (newMode === this.options.mode) return true;
+
+      // cleanup حالت قبلی
+      if (this.options.mode === "camera") {
+        if (newMode === "image") {
+          this._hideCamera();
+        } else {
+          this._cleanupCamera();
+        }
+      } else if (this.options.mode === "image") {
+        if (this.imageManager) {
+          this.imageManager.destroy();
+        }
+
+        if (newMode === "camera") {
+          this.options.mode = newMode;
+          const success = await this.initCamera();
+          return success;
+        }
+      }
+
+      this.options.mode = newMode;
+
+      // راه‌اندازی حالت جدید
       if (newMode === "image") {
-        this._hideCamera();
-      } else {
-        this._cleanupCamera();
-      }
-    } else if (this.options.mode === "image") {
-      if (this.imageManager) {
-        this.imageManager.destroy();
+        const success = await this.initImageMode();
+        return success;
       }
 
-      if (newMode === "camera") {
-        this.options.mode = newMode;
-        await this.initCamera();
-        return;
-      }
-    }
-
-    this.options.mode = newMode;
-
-    // راه‌اندازی حالت جدید
-    if (newMode === "image") {
-      await this.initImageMode();
+      return true;
+    } catch (error) {
+      console.error(`Error switching to ${newMode} mode:`, error);
+      return false;
     }
   }
 
@@ -224,15 +235,18 @@ export class ModeManager {
 
   /**
    * راه‌اندازی حالت دوربین
-   * @returns {Promise<void>}
+   * @returns {Promise<boolean>}
    */
   async initCamera() {
     try {
+      console.log("Initializing camera mode...");
+
       // نمایش المنت ویدیو
       if (this.videoElement) {
         this.videoElement.style = "";
         this.videoElement.style.transform = "scaleX(-1)";
         this.videoElement.style.display = "block";
+        this.videoElement.style.visibility = "visible";
       }
 
       // تنظیم مجدد استایل‌های canvas
@@ -240,6 +254,7 @@ export class ModeManager {
         this.canvasElement.style = "";
         this.canvasElement.style.transform = "scaleX(-1)";
         this.canvasElement.style.display = "block";
+        this.canvasElement.style.visibility = "visible";
       }
 
       // راه‌اندازی ویدیو و face mesh
@@ -254,6 +269,7 @@ export class ModeManager {
       this.faceMeshInstance = faceMeshResult.faceMesh;
       this.cameraStream = faceMeshResult.stream;
 
+      console.log("Camera mode initialized successfully");
       return true;
     } catch (error) {
       console.error("Error initializing camera:", error);
@@ -267,11 +283,16 @@ export class ModeManager {
 
   /**
    * راه‌اندازی حالت تصویر
-   * @returns {Promise<void>}
+   * @returns {Promise<boolean>}
    */
   async initImageMode() {
     try {
+      console.log("Initializing image mode...");
+
       const container = document.querySelector(".armo-sdk-container");
+      if (!container) {
+        throw new Error("Container not found");
+      }
 
       // مخفی کردن کامل ویدیو
       if (this.videoElement) {
@@ -288,6 +309,12 @@ export class ModeManager {
         this.canvasElement.style.left = "0";
         this.canvasElement.style.width = "100%";
         this.canvasElement.style.height = "100%";
+        this.canvasElement.style.transform = "none"; // حذف mirror effect برای تصاویر
+
+        // تنظیم اندازه canvas
+        const containerRect = container.getBoundingClientRect();
+        this.canvasElement.width = containerRect.width;
+        this.canvasElement.height = containerRect.height;
 
         // پر کردن canvas با رنگ سیاه
         const ctx = this.canvasElement.getContext("2d");
@@ -297,22 +324,25 @@ export class ModeManager {
 
       // ایجاد یا بازیابی imageManager
       if (!this.imageManager) {
-        const comparisonManager = this.options.comparisonManager || null;
+        console.log("Creating new ImageManager...");
+        // ✅ رفع مشکل: استفاده از this.comparisonManager به جای this.options.comparisonManager
         this.imageManager = new ImageManager(
           this.canvasElement,
           this.featureManager,
-          comparisonManager
+          this.comparisonManager // ✅ تغییر اصلی اینجاست!
         );
       }
 
       // نمایش رابط کاربری آپلود
       const uploadManager = initImageUpload(container, async (imageData) => {
-        this.uiManager.showLoading();
+        console.log("Image selected, processing...");
+        this.uiManager.showLoadingWithMessage("در حال پردازش تصویر...");
 
         try {
           const success = await this.imageManager.loadImage(imageData);
 
           if (success) {
+            console.log("Image loaded successfully");
             // اعمال تنظیمات فعلی آرایش روی عکس
             if (this.options.currentMakeupType && this.options.currentColor) {
               this.imageManager.updateMakeup(
@@ -324,6 +354,7 @@ export class ModeManager {
                   : this.options.transparency
               );
             }
+            this.uiManager.showSuccessMessage("تصویر با موفقیت بارگذاری شد");
           } else {
             this.uiManager.showErrorMessage(
               "خطا",
@@ -331,6 +362,7 @@ export class ModeManager {
             );
           }
         } catch (error) {
+          console.error("Error processing image:", error);
           this.uiManager.showErrorMessage(
             "خطا",
             "مشکلی در پردازش تصویر رخ داد"
@@ -342,15 +374,17 @@ export class ModeManager {
 
       // اضافه کردن callback برای زمانی که کاربر مدال را می‌بندد
       uploadManager.show(() => {
+        console.log("Upload modal closed, switching back to camera...");
         this.switchMode("camera");
       });
 
+      console.log("Image mode initialized successfully");
       return true;
     } catch (error) {
       console.error("Error initializing image mode:", error);
       this.uiManager.showErrorMessage(
         "خطا",
-        "مشکلی در راه‌اندازی حالت تصویر رخ داد"
+        `مشکلی در راه‌اندازی حالت تصویر رخ داد: ${error.message}`
       );
       return false;
     }
@@ -377,6 +411,7 @@ export class ModeManager {
    * پاکسازی منابع
    */
   cleanup() {
+    console.log("Cleaning up ModeManager...");
     this._cleanupCamera();
 
     if (this.imageManager) {
